@@ -29,6 +29,9 @@ build/
 # Logs
 *.log
 
+# Playwright artifacts
+.playwright-cli/
+
 # Node
 node_modules/
 
