@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<!-- Intentionally missing lang attribute — accessibility issue #1 -->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Intentionally weak title — accessibility issue #2 -->
+  <title>Shop</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f5f7;
+      color: #1d1d1f;
+    }
+
+    /* No semantic <header>, using div — accessibility issue #3 */
+    .site-header {
+      background: #1d1d1f;
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .site-header .logo {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    /* Navigation using divs instead of <nav> — accessibility issue #4 */
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    /* Links styled as divs with onclick — accessibility issue #5 */
+    .nav-link {
+      color: #a1a1a6;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .nav-link:hover { color: white; }
+
+    /* Search with no label — accessibility issue #6 */
+    .search-bar {
+      padding: 16px 24px;
+      background: white;
+      border-bottom: 1px solid #e5e5e7;
+    }
+
+    .search-bar input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 16px;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    /* No <main> landmark — accessibility issue #7 */
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    /* Heading hierarchy skip: H1 missing, starts with H3 — accessibility issue #8 */
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    /* Filter "buttons" are spans with onclick — accessibility issue #9 */
+    .filter-btn {
+      padding: 8px 16px;
+      background: #e5e5e7;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .filter-btn.active {
+      background: #1d1d1f;
+      color: white;
+    }
+    .filter-btn:hover {
+      background: #d2d2d7;
+    }
+    .filter-btn.active:hover {
+      background: #333;
+    }
+
+    .price-filter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    /* Input with no label, just placeholder — accessibility issue #10 */
+    .price-filter input {
+      width: 80px;
+      padding: 8px 12px;
+      border: 1px solid #d2d2d7;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      transition: transform 0.2s;
+    }
+    .product-card:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Images with no alt text — accessibility issue #11 */
+    .product-image {
+      width: 100%;
+      height: 200px;
+      background: #e5e5e7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #a1a1a6;
+      font-size: 48px;
+    }
+
+    .product-info {
+      padding: 16px;
+    }
+
+    .product-name {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      color: #1d1d1f;
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 8px;
+    }
+
+    .product-rating {
+      color: #f5a623;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    /* Button with no text, just an icon — accessibility issue #12 */
+    .add-to-cart {
+      width: 100%;
+      padding: 10px;
+      background: #1d1d1f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    .add-to-cart:hover {
+      background: #333;
+    }
+
+    /* Cart icon button with no label — accessibility issue #13 */
+    .cart-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: #ff3b30;
+      color: white;
+      font-size: 10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Modal with no focus trap — accessibility issue #14 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 480px;
+      width: 90%;
+    }
+
+    .modal h2 {
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    /* Some labels present, some missing — mixed accessibility */
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 4px;
+      color: #6e6e73;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #d2d2d7;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Two identical "Submit" buttons — accessibility issue #15 */
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      background: #1d1d1f;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #6e6e73;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #1d1d1f;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      transition: transform 0.3s;
+      z-index: 200;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Sort dropdown with no label — accessibility issue #16 */
+    .sort-control {
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sort-control select {
+      padding: 8px 12px;
+      border: 1px solid #d2d2d7;
+      border-radius: 6px;
+      font-size: 13px;
+      background: white;
+    }
+
+    /* Positive tabindex — accessibility issue #17 */
+    .promo-banner {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 16px 24px;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Footer with low contrast text — accessibility issue #18 */
+    .site-footer {
+      background: #f5f5f7;
+      padding: 32px 24px;
+      text-align: center;
+      color: #d2d2d7;
+      font-size: 12px;
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Promo banner with positive tabindex -->
+  <div class="promo-banner" tabindex="5" onclick="alert('Promo clicked')">
+    Free shipping on orders over $50 — Shop Now
+  </div>
+
+  <!-- Non-semantic header -->
+  <div class="site-header">
+    <div class="logo">TechMart</div>
+    <div class="nav-links">
+      <div class="nav-link" onclick="void(0)">Products</div>
+      <div class="nav-link" onclick="void(0)">Deals</div>
+      <div class="nav-link" onclick="void(0)">Support</div>
+    </div>
+    <!-- Cart button with no accessible label -->
+    <button class="cart-btn" onclick="openCart()">
+      🛒
+      <span class="cart-badge" id="cartCount">0</span>
+    </button>
+  </div>
+
+  <!-- Search with no label -->
+  <div class="search-bar">
+    <input type="text" placeholder="Search products...">
+  </div>
+
+  <!-- No main landmark wrapper -->
+  <div class="content">
+    <!-- H3 instead of H1 — skipped heading levels -->
+    <h3 class="section-title">Featured Products</h3>
+
+    <!-- Sort with no label -->
+    <div class="sort-control">
+      <span>Sort:</span>
+      <select id="sortSelect" onchange="sortProducts()">
+        <option value="featured">Featured</option>
+        <option value="price-low">Price: Low to High</option>
+        <option value="price-high">Price: High to Low</option>
+        <option value="rating">Top Rated</option>
+      </select>
+    </div>
+
+    <!-- Filters using non-semantic spans -->
+    <div class="filters" id="filters">
+      <span class="filter-btn active" onclick="toggleFilter(this, 'all')">All</span>
+      <span class="filter-btn" onclick="toggleFilter(this, 'audio')">Audio</span>
+      <span class="filter-btn" onclick="toggleFilter(this, 'wearable')">Wearables</span>
+      <span class="filter-btn" onclick="toggleFilter(this, 'accessories')">Accessories</span>
+    </div>
+
+    <!-- Price filter with unlabeled inputs -->
+    <div class="price-filter">
+      <span>Price:</span>
+      <input type="number" id="minPrice" placeholder="Min" value="0">
+      <span>to</span>
+      <input type="number" id="maxPrice" placeholder="Max" value="500">
+      <!-- div acting as button -->
+      <div class="filter-btn" onclick="applyPriceFilter()" style="background:#1d1d1f;color:white;">Apply</div>
+    </div>
+
+    <!-- Product grid -->
+    <div class="product-grid" id="productGrid">
+    </div>
+  </div>
+
+  <!-- Checkout modal without focus trap -->
+  <div class="modal-overlay" id="checkoutModal">
+    <div class="modal" style="position:relative;">
+      <button class="close-modal" onclick="closeModal()">×</button>
+      <h2>Checkout</h2>
+
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" placeholder="John Doe">
+      </div>
+
+      <div class="form-group">
+        <!-- Missing label — just placeholder -->
+        <input type="email" placeholder="Email address">
+      </div>
+
+      <div class="form-group">
+        <label for="address">Shipping Address</label>
+        <input type="text" id="address" placeholder="123 Main St">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <!-- Missing label -->
+          <input type="text" placeholder="City">
+        </div>
+        <div class="form-group">
+          <!-- Missing label -->
+          <input type="text" placeholder="ZIP Code">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="cardNumber">Card Number</label>
+        <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <!-- Missing label -->
+          <input type="text" placeholder="MM/YY">
+        </div>
+        <div class="form-group">
+          <!-- Missing label -->
+          <input type="text" placeholder="CVV">
+        </div>
+      </div>
+
+      <!-- Two submit buttons with identical text -->
+      <button class="submit-btn" onclick="submitOrder()">Place Order</button>
+      <button class="submit-btn" onclick="submitOrder()" style="background:#6e6e73;margin-top:8px;">Place Order</button>
+    </div>
+  </div>
+
+  <!-- Toast notification — no aria-live -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Low contrast footer -->
+  <div class="site-footer">
+    <p>© 2026 TechMart. All rights reserved. Terms · Privacy · Contact</p>
+  </div>
+
+  <script>
+    // Product data
+    const products = [
+      { id: 1, name: "Wireless Headphones Pro", price: 89.99, rating: 4.5, category: "audio", image: "🎧" },
+      { id: 2, name: "Smart Watch Ultra", price: 249.99, rating: 4.8, category: "wearable", image: "⌚" },
+      { id: 3, name: "Bluetooth Speaker", price: 39.99, rating: 4.2, category: "audio", image: "🔊" },
+      { id: 4, name: "USB-C Hub 7-in-1", price: 29.99, rating: 4.0, category: "accessories", image: "🔌" },
+      { id: 5, name: "Noise Cancelling Earbuds", price: 129.99, rating: 4.7, category: "audio", image: "🎵" },
+      { id: 6, name: "Fitness Tracker Band", price: 49.99, rating: 4.1, category: "wearable", image: "📱" },
+      { id: 7, name: "Wireless Charging Pad", price: 24.99, rating: 3.9, category: "accessories", image: "⚡" },
+      { id: 8, name: "Premium Headphone Stand", price: 34.99, rating: 4.3, category: "accessories", image: "🎯" },
+    ];
+
+    let cart = [];
+    let activeFilter = "all";
+
+    function renderProducts(items) {
+      const grid = document.getElementById("productGrid");
+      grid.innerHTML = items.map(p => `
+        <div class="product-card" data-category="${p.category}" data-price="${p.price}">
+          <!-- Image div instead of img, no alt — accessibility issue -->
+          <div class="product-image">${p.image}</div>
+          <div class="product-info">
+            <div class="product-name">${p.name}</div>
+            <div class="product-price">$${p.price.toFixed(2)}</div>
+            <div class="product-rating">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5 - Math.floor(p.rating))} ${p.rating}</div>
+            <!-- Button says "Add" but has no context about what -->
+            <button class="add-to-cart" onclick="addToCart(${p.id})">Add</button>
+          </div>
+        </div>
+      `).join("");
+    }
+
+    function toggleFilter(el, category) {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      el.classList.add("active");
+      activeFilter = category;
+      applyFilters();
+    }
+
+    function applyPriceFilter() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const min = parseFloat(document.getElementById("minPrice").value) || 0;
+      const max = parseFloat(document.getElementById("maxPrice").value) || Infinity;
+
+      let filtered = products;
+      if (activeFilter !== "all") {
+        filtered = filtered.filter(p => p.category === activeFilter);
+      }
+      filtered = filtered.filter(p => p.price >= min && p.price <= max);
+
+      renderProducts(filtered);
+    }
+
+    function sortProducts() {
+      const sort = document.getElementById("sortSelect").value;
+      let sorted = [...products];
+
+      if (activeFilter !== "all") {
+        sorted = sorted.filter(p => p.category === activeFilter);
+      }
+
+      switch (sort) {
+        case "price-low": sorted.sort((a, b) => a.price - b.price); break;
+        case "price-high": sorted.sort((a, b) => b.price - a.price); break;
+        case "rating": sorted.sort((a, b) => b.rating - a.rating); break;
+      }
+
+      renderProducts(sorted);
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      document.getElementById("cartCount").textContent = cart.length;
+      showToast(`${product.name} added to cart`);
+    }
+
+    function openCart() {
+      if (cart.length === 0) {
+        showToast("Your cart is empty");
+        return;
+      }
+      document.getElementById("checkoutModal").classList.add("active");
+      // No focus management — accessibility issue
+    }
+
+    function closeModal() {
+      document.getElementById("checkoutModal").classList.remove("active");
+      // Focus not returned to trigger — accessibility issue
+    }
+
+    function submitOrder() {
+      showToast("Order submitted! (demo)");
+      closeModal();
+      cart = [];
+      document.getElementById("cartCount").textContent = "0";
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // Initial render
+    renderProducts(products);
+  </script>
+</body>
+</html>
