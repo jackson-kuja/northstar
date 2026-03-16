@@ -1,104 +1,138 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" width="1960" height="1120" viewBox="0 0 980 560" font-family="'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif">
   <defs>
-    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
-      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
+    <linearGradient id="pageBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fcfdff"/>
+      <stop offset="100%" stop-color="#eef3fb"/>
+    </linearGradient>
+    <linearGradient id="panelBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eef5ff"/>
+      <stop offset="100%" stop-color="#dde9ff"/>
+    </linearGradient>
+    <linearGradient id="panelSand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fffaf1"/>
+      <stop offset="100%" stop-color="#f7f0df"/>
+    </linearGradient>
+    <linearGradient id="panelGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f0fbf4"/>
+      <stop offset="100%" stop-color="#dff4e7"/>
+    </linearGradient>
+    <linearGradient id="actionBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5b8cff"/>
+      <stop offset="100%" stop-color="#3f6fe2"/>
+    </linearGradient>
+    <linearGradient id="actionGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#39b75c"/>
+      <stop offset="100%" stop-color="#2d9a4b"/>
+    </linearGradient>
+    <filter id="softShadow" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#8a9ab5" flood-opacity="0.14"/>
     </filter>
-    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#4f8ff7"/>
-      <stop offset="100%" stop-color="#3b6fd4"/>
-    </linearGradient>
-    <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#34a853"/>
-      <stop offset="100%" stop-color="#2d9148"/>
-    </linearGradient>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#5b8cff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#39b75c"/>
+    </marker>
   </defs>
 
-  <rect width="900" height="520" rx="12" fill="#0f1117"/>
+  <rect width="980" height="560" rx="28" fill="url(#pageBg)"/>
+  <circle cx="120" cy="86" r="120" fill="#edf4ff"/>
+  <circle cx="866" cy="98" r="110" fill="#eef9f1"/>
+  <circle cx="520" cy="518" r="180" fill="#f6f3e7"/>
 
-  <text x="450" y="34" text-anchor="middle" fill="#e4e6ef" font-size="19" font-weight="700">Northstar - System Architecture</text>
-  <text x="450" y="54" text-anchor="middle" fill="#8b8fa7" font-size="11">Current runtime architecture from the codebase</text>
+  <text x="490" y="46" text-anchor="middle" fill="#172033" font-size="20" font-weight="700">Northstar - System Architecture</text>
+  <text x="490" y="69" text-anchor="middle" fill="#5e6c84" font-size="11">Live voice on Gemini 2.5 Flash Native Audio. Browser loop on Gemini 3 Flash.</text>
 
-  <!-- Chrome Extension -->
-  <rect x="30" y="78" width="260" height="415" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="160" y="103" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Chrome Extension (MV3)</text>
+  <!-- Left column -->
+  <rect x="34" y="96" width="278" height="440" rx="24" fill="url(#panelBlue)" stroke="#c9dafb" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="34" y="96" width="278" height="16" rx="24" fill="#6b9cff"/>
+  <text x="173" y="132" text-anchor="middle" fill="#315bb7" font-size="14" font-weight="700">Chrome Extension (MV3)</text>
+  <text x="173" y="150" text-anchor="middle" fill="#6a7a92" font-size="10">User-facing browser control and page instrumentation</text>
 
-  <rect x="50" y="120" width="220" height="58" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="145" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Side Panel UI</text>
-  <text x="160" y="161" text-anchor="middle" fill="#8b8fa7" font-size="10">Voice I/O | Transcript | Status</text>
+  <rect x="56" y="170" width="234" height="60" rx="16" fill="#ffffff" stroke="#d5e1f6" stroke-width="1.2"/>
+  <text x="173" y="196" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Side Panel UI</text>
+  <text x="173" y="214" text-anchor="middle" fill="#62718a" font-size="9.5">Voice input, typed commands, transcript, status</text>
 
-  <rect x="50" y="188" width="220" height="58" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="213" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Service Worker</text>
-  <text x="160" y="229" text-anchor="middle" fill="#8b8fa7" font-size="10">WebSocket | Message Router</text>
+  <rect x="56" y="242" width="234" height="64" rx="16" fill="#ffffff" stroke="#d5e1f6" stroke-width="1.2"/>
+  <text x="173" y="268" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Service Worker</text>
+  <text x="173" y="287" text-anchor="middle" fill="#62718a" font-size="9.5">WebSocket session, routing, screenshot capture</text>
 
-  <rect x="50" y="256" width="220" height="92" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="280" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Content Script</text>
-  <text x="160" y="297" text-anchor="middle" fill="#8b8fa7" font-size="10">Page map extraction</text>
-  <text x="160" y="314" text-anchor="middle" fill="#8b8fa7" font-size="10">DOM actions | Overlays</text>
-  <text x="160" y="331" text-anchor="middle" fill="#8b8fa7" font-size="10">A11y issue detection</text>
+  <rect x="56" y="318" width="234" height="82" rx="16" fill="#ffffff" stroke="#d5e1f6" stroke-width="1.2"/>
+  <text x="173" y="344" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Content Script</text>
+  <text x="173" y="364" text-anchor="middle" fill="#62718a" font-size="9.5">Page map extraction, DOM actions, overlays</text>
+  <text x="173" y="383" text-anchor="middle" fill="#62718a" font-size="9.5">Accessibility issue detection</text>
 
-  <rect x="50" y="358" width="220" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="379" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Tab Capture</text>
-  <text x="160" y="395" text-anchor="middle" fill="#8b8fa7" font-size="10">Screenshot | Visual state</text>
+  <rect x="56" y="412" width="234" height="50" rx="16" fill="#ffffff" stroke="#d5e1f6" stroke-width="1.2"/>
+  <text x="173" y="434" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Tab Capture</text>
+  <text x="173" y="452" text-anchor="middle" fill="#62718a" font-size="9.5">Visible tab screenshots and visual state</text>
 
-  <rect x="84" y="428" width="152" height="38" rx="19" fill="url(#blue)"/>
-  <text x="160" y="451" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600">User (Voice / Text)</text>
+  <rect x="92" y="468" width="162" height="38" rx="19" fill="url(#actionBlue)"/>
+  <text x="173" y="492" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">User voice or text</text>
 
-  <!-- Backend -->
-  <rect x="315" y="78" width="270" height="360" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="450" y="103" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Backend - Cloud Run</text>
+  <!-- Center column -->
+  <rect x="350" y="96" width="280" height="440" rx="24" fill="url(#panelSand)" stroke="#e3d4ac" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="350" y="96" width="280" height="16" rx="24" fill="#f0bf57"/>
+  <text x="490" y="132" text-anchor="middle" fill="#8f6406" font-size="14" font-weight="700">Backend - Cloud Run</text>
+  <text x="490" y="150" text-anchor="middle" fill="#7f6f48" font-size="10">FastAPI WebSocket backend and browser task orchestration</text>
 
-  <rect x="338" y="120" width="224" height="45" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="450" y="140" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">FastAPI + WebSocket</text>
-  <text x="450" y="155" text-anchor="middle" fill="#8b8fa7" font-size="10">Session transport</text>
+  <rect x="374" y="172" width="232" height="54" rx="16" fill="#ffffff" stroke="#eadfbe" stroke-width="1.2"/>
+  <text x="490" y="194" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">FastAPI + WebSocket</text>
+  <text x="490" y="212" text-anchor="middle" fill="#6d7380" font-size="10.5">Session transport and request handling</text>
 
-  <rect x="338" y="175" width="224" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="450" y="196" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Live Session Manager</text>
-  <text x="450" y="212" text-anchor="middle" fill="#8b8fa7" font-size="10">Gemini Live session | browser_task tool</text>
+  <rect x="374" y="238" width="232" height="62" rx="16" fill="#ffffff" stroke="#eadfbe" stroke-width="1.2"/>
+  <text x="490" y="261" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Live Session Manager</text>
+  <text x="490" y="278" text-anchor="middle" fill="#6d7380" font-size="9.5">Gemini Live session plus</text>
+  <text x="490" y="290" text-anchor="middle" fill="#6d7380" font-size="9.5">browser_task tool bridge</text>
 
-  <rect x="338" y="235" width="108" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="392" y="256" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Page Context</text>
-  <text x="392" y="272" text-anchor="middle" fill="#8b8fa7" font-size="9">Page map | screenshot</text>
+  <rect x="374" y="312" width="110" height="60" rx="16" fill="#ffffff" stroke="#eadfbe" stroke-width="1.2"/>
+  <text x="429" y="337" text-anchor="middle" fill="#172033" font-size="11" font-weight="700">Page Context</text>
+  <text x="429" y="356" text-anchor="middle" fill="#6d7380" font-size="9">Page map &amp; screenshots</text>
 
-  <rect x="454" y="235" width="108" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="508" y="256" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Action Bridge</text>
-  <text x="508" y="272" text-anchor="middle" fill="#8b8fa7" font-size="9">Content script tools</text>
+  <rect x="496" y="312" width="110" height="60" rx="16" fill="#ffffff" stroke="#eadfbe" stroke-width="1.2"/>
+  <text x="551" y="337" text-anchor="middle" fill="#172033" font-size="11" font-weight="700">Action Bridge</text>
+  <text x="551" y="356" text-anchor="middle" fill="#6d7380" font-size="9">Content script tool calls</text>
 
-  <rect x="338" y="295" width="224" height="60" rx="8" fill="#232736" stroke="#4f8ff7" stroke-width="1.5"/>
-  <text x="450" y="319" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Browser Agent Loop</text>
-  <text x="450" y="336" text-anchor="middle" fill="#8b8fa7" font-size="10">DOM first | visual fallback | ask user</text>
+  <rect x="374" y="386" width="232" height="72" rx="18" fill="#fffdf7" stroke="#5b8cff" stroke-width="2"/>
+  <text x="490" y="414" text-anchor="middle" fill="#172033" font-size="13" font-weight="700">Browser Agent Loop</text>
+  <text x="490" y="434" text-anchor="middle" fill="#5f6c84" font-size="9.5">Gemini 3 Flash | DOM first | visual fallback</text>
+  <text x="490" y="451" text-anchor="middle" fill="#5f6c84" font-size="9.5">Ask user when confidence is low</text>
 
-  <rect x="338" y="367" width="224" height="45" rx="8" fill="#232736" stroke="#4ff78b" stroke-width="1.5" stroke-dasharray="5,4"/>
-  <text x="450" y="387" text-anchor="middle" fill="#4ff78b" font-size="10" font-weight="600">Observe -> Plan -> Act -> Verify</text>
-  <text x="450" y="402" text-anchor="middle" fill="#8b8fa7" font-size="9">Verified browser control loop</text>
+  <rect x="374" y="470" width="232" height="28" rx="14" fill="#f6fff8" stroke="#39b75c" stroke-width="1.8" stroke-dasharray="5,4"/>
+  <text x="490" y="488" text-anchor="middle" fill="#279248" font-size="10.5" font-weight="700">Observe -> Plan -> Act -> Verify</text>
 
-  <!-- Google Cloud -->
-  <rect x="610" y="78" width="260" height="415" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="740" y="103" text-anchor="middle" fill="#34a853" font-size="13" font-weight="600">Google Cloud</text>
+  <!-- Right column -->
+  <rect x="668" y="96" width="278" height="440" rx="24" fill="url(#panelGreen)" stroke="#c8e8d1" stroke-width="1.5" filter="url(#softShadow)"/>
+  <rect x="668" y="96" width="278" height="16" rx="24" fill="#58c779"/>
+  <text x="807" y="132" text-anchor="middle" fill="#228546" font-size="14" font-weight="700">Google Cloud</text>
+  <text x="807" y="150" text-anchor="middle" fill="#687a70" font-size="10">Runtime models, persistence, logging, and deployment</text>
 
-  <rect x="630" y="120" width="220" height="55" rx="8" fill="#232736" stroke="#34a853" stroke-width="1.5"/>
-  <text x="740" y="143" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash Native Audio</text>
-  <text x="740" y="160" text-anchor="middle" fill="#8b8fa7" font-size="10">Live voice | tool calling</text>
+  <rect x="690" y="172" width="234" height="74" rx="16" fill="#ffffff" stroke="#cde8d4" stroke-width="1.3"/>
+  <text x="807" y="200" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Gemini 2.5 Flash Native Audio</text>
+  <text x="807" y="220" text-anchor="middle" fill="#62718a" font-size="10.5">Real-time voice session and tool calling</text>
 
-  <rect x="630" y="190" width="220" height="55" rx="8" fill="#232736" stroke="#34a853" stroke-width="1.5"/>
-  <text x="740" y="213" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 3 Flash</text>
-  <text x="740" y="230" text-anchor="middle" fill="#8b8fa7" font-size="10">Unified browser-agent loop</text>
+  <rect x="690" y="258" width="234" height="74" rx="16" fill="#ffffff" stroke="#cde8d4" stroke-width="1.3"/>
+  <text x="807" y="286" text-anchor="middle" fill="#172033" font-size="12" font-weight="700">Gemini 3 Flash</text>
+  <text x="807" y="306" text-anchor="middle" fill="#62718a" font-size="10.5">Unified browser-agent loop</text>
 
-  <rect x="630" y="270" width="220" height="50" rx="8" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="740" y="291" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Firestore + Cloud Logging</text>
-  <text x="740" y="307" text-anchor="middle" fill="#8b8fa7" font-size="9">Persistence (optional) | Observability (optional)</text>
+  <rect x="690" y="346" width="234" height="56" rx="16" fill="#ffffff" stroke="#cde8d4" stroke-width="1.3"/>
+  <text x="807" y="369" text-anchor="middle" fill="#172033" font-size="11.5" font-weight="700">Firestore + Cloud Logging</text>
+  <text x="807" y="387" text-anchor="middle" fill="#62718a" font-size="9.8">Optional persistence and observability</text>
 
-  <rect x="630" y="340" width="220" height="50" rx="8" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="740" y="361" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Cloud Build + Artifact Registry</text>
-  <text x="740" y="377" text-anchor="middle" fill="#8b8fa7" font-size="9">Build pipeline | image publishing</text>
+  <rect x="690" y="416" width="234" height="56" rx="16" fill="#ffffff" stroke="#cde8d4" stroke-width="1.3"/>
+  <text x="807" y="439" text-anchor="middle" fill="#172033" font-size="11.5" font-weight="700">Cloud Build + Artifact Registry</text>
+  <text x="807" y="457" text-anchor="middle" fill="#62718a" font-size="9.8">Build pipeline and image publishing</text>
 
-  <rect x="630" y="410" width="220" height="48" rx="8" fill="url(#green)"/>
-  <text x="740" y="439" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600">Cloud Run (Deployed)</text>
+  <rect x="714" y="482" width="186" height="42" rx="21" fill="url(#actionGreen)"/>
+  <text x="807" y="508" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="700">Cloud Run deployed backend</text>
 
-  <!-- Connections -->
-  <line x1="290" y1="217" x2="315" y2="142" stroke="#4f8ff7" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <text x="304" y="169" fill="#4f8ff7" font-size="8" transform="rotate(-70 304 169)">WebSocket</text>
+  <!-- Connectors -->
+  <line x1="290" y1="274" x2="374" y2="199" stroke="#5b8cff" stroke-width="2.2" stroke-dasharray="7,5" marker-end="url(#arrowBlue)"/>
+  <text x="325" y="222" fill="#4d7de8" font-size="10" font-weight="700" transform="rotate(-42 325 222)">WebSocket</text>
 
-  <line x1="585" y1="200" x2="630" y2="147" stroke="#34a853" stroke-width="1.5"/>
-  <line x1="585" y1="325" x2="630" y2="217" stroke="#34a853" stroke-width="1.5"/>
-  <line x1="585" y1="389" x2="630" y2="295" stroke="#34a853" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="290" y1="359" x2="374" y2="342" stroke="#5b8cff" stroke-width="1.8" marker-end="url(#arrowBlue)"/>
+  <line x1="290" y1="437" x2="374" y2="342" stroke="#5b8cff" stroke-width="1.8" stroke-dasharray="6,5" marker-end="url(#arrowBlue)"/>
+
+  <path d="M606 269 L638 269 L638 209 L690 209" fill="none" stroke="#39b75c" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+  <path d="M606 422 L654 422 L654 295 L690 295" fill="none" stroke="#39b75c" stroke-width="2.2" marker-end="url(#arrowGreen)"/>
+  <path d="M606 484 L622 484 L622 374 L690 374" fill="none" stroke="#39b75c" stroke-width="1.8" stroke-dasharray="6,5" marker-end="url(#arrowGreen)"/>
 </svg>
