@@ -18,8 +18,14 @@ from google import genai
 from google.genai import types
 
 from app.browser_agent import BrowserAgent
+from app.live_config import (
+    LIVE_SETTINGS_DEFAULTS,
+    build_live_connect_config,
+    live_settings_require_v1alpha,
+    normalize_live_settings,
+)
 from app.live_transcript import sanitize_live_transcript_text
-from app.live_session import LiveSession
+from app.live_session import LIVE_SYSTEM_INSTRUCTION, LiveSession
 from app.session_recorder import (
     DEFAULT_RECORDINGS_ROOT,
     LOCAL_SESSION_RECORDING_ENABLED,
@@ -244,7 +250,35 @@ def create_session(session_id: str, websocket: WebSocket) -> dict[str, Any]:
         "last_assistant_output_at": 0.0,
         "suppress_live_assistant_output": False,
         "pending_action_future": None,
+        "live_settings": dict(LIVE_SETTINGS_DEFAULTS),
+        "live_settings_dirty": False,
     }
+
+
+def create_live_client_for_settings(settings: dict[str, Any] | None) -> genai.Client:
+    client_kwargs: dict[str, Any] = {}
+    if GEMINI_API_KEY:
+        client_kwargs["api_key"] = GEMINI_API_KEY
+    if live_settings_require_v1alpha(settings):
+        client_kwargs["http_options"] = types.HttpOptions(api_version="v1alpha")
+    return genai.Client(**client_kwargs)
+
+
+async def restart_live_session_with_latest_settings(session: dict[str, Any]) -> None:
+    live_session = session.get("live_session")
+    if live_session and live_session.is_active():
+        try:
+            await live_session.stop()
+        except Exception:
+            logger.info("Live session stop failed during settings refresh.", exc_info=True)
+    live_task = session.get("live_task")
+    if live_task:
+        try:
+            await live_task
+        except Exception:
+            logger.info("Live session wait failed during settings refresh.", exc_info=True)
+    session["live_settings_dirty"] = False
+    await ensure_live_session(session, force=True)
 
 
 async def cleanup_session(session_id: str):
@@ -333,6 +367,29 @@ async def handle_client_message(session: dict[str, Any], message: dict[str, Any]
             payload={},
         )
         await ensure_live_session(session)
+        return
+
+    if msg_type == "live_settings":
+        settings = normalize_live_settings(message.get("data"))
+        previous_settings = normalize_live_settings(session.get("live_settings"))
+        session["live_settings"] = settings
+        await record_session_event(
+            session,
+            source="extension",
+            event_type="live_settings_updated",
+            payload={"settings": settings},
+        )
+        if settings == previous_settings:
+            return
+
+        live_session = session.get("live_session")
+        browser_task_job = session.get("browser_task_job")
+        if live_session and live_session.is_active() and not (
+            browser_task_job and not browser_task_job.done()
+        ):
+            await restart_live_session_with_latest_settings(session)
+        elif browser_task_job and not browser_task_job.done():
+            session["live_settings_dirty"] = True
         return
 
     if msg_type == "live_audio_chunk":
@@ -698,9 +755,16 @@ async def ensure_live_session(session: dict[str, Any], force: bool = False):
         )
         return response
 
-    live_session = LiveSession(
-        client=client,
+    live_settings = normalize_live_settings(session.get("live_settings"))
+    live_connect_config = build_live_connect_config(
+        settings=live_settings,
         tools=LIVE_TOOL_DECLARATIONS,
+        system_instruction=LIVE_SYSTEM_INSTRUCTION,
+    )
+    live_session = LiveSession(
+        client=create_live_client_for_settings(live_settings),
+        tools=LIVE_TOOL_DECLARATIONS,
+        connect_config=live_connect_config,
         on_audio=on_audio,
         on_transcript=on_transcript,
         on_tool_call=on_tool_call,
@@ -1006,6 +1070,9 @@ async def run_browser_task_job(
                     "text": fallback_text,
                 },
             )
+
+    if session.get("live_settings_dirty"):
+        await restart_live_session_with_latest_settings(session)
 
 
 async def execute_browser_action(

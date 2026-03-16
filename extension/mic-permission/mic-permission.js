@@ -1,12 +1,14 @@
 const params = new URLSearchParams(window.location.search);
 const sourceTabId = Number(params.get("tabId") || "0") || null;
 
+const permissionCard = document.getElementById("permissionCard");
 const enableButton = document.getElementById("enableButton");
+const returnButton = document.getElementById("returnButton");
 const status = document.getElementById("status");
 
 enableButton.addEventListener("click", async () => {
   enableButton.disabled = true;
-  setStatus("Requesting microphone access...", "");
+  setStatus("Chrome is opening the microphone prompt for this setup tab...", "working");
 
   try {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -42,6 +44,11 @@ enableButton.addEventListener("click", async () => {
   }
 });
 
+returnButton?.addEventListener("click", async () => {
+  await restoreSourceTab();
+  await closeCurrentTab();
+});
+
 function classifyFailure(error) {
   if (["NotAllowedError", "SecurityError", "PermissionDeniedError"].includes(error?.name || "")) {
     return "blocked";
@@ -65,7 +72,8 @@ function describeFailure(error) {
 
 function setStatus(text, kind) {
   status.textContent = text;
-  status.className = kind ? `status ${kind}` : "status";
+  status.dataset.kind = kind || "";
+  permissionCard.dataset.state = ["working", "success", "error"].includes(kind) ? kind : "idle";
 }
 
 async function restoreSourceTab() {

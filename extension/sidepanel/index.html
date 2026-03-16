@@ -12,6 +12,39 @@
   <div id="app" data-ui-state="idle">
     <p id="panelAnnouncements" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 
+    <header class="topbar" aria-label="Northstar panel bar">
+      <div
+        id="connectionStatus"
+        class="connection-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-label="Connection status: disconnected"
+      >
+        <span class="status-dot"></span>
+        <span class="status-text">Disconnected</span>
+      </div>
+
+      <div class="topbar-actions">
+        <div class="scope-info">
+          <span id="scopeTitle" class="scope-title">No active page</span>
+        </div>
+        <button
+          id="openLiveSettingsButton"
+          class="btn-icon settings-trigger"
+          type="button"
+          aria-label="Open Northstar settings"
+          aria-controls="liveSettingsDialog"
+          aria-expanded="false"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .16 1.7 1.7 0 0 0-.86 1.5V21a2 2 0 1 1-4 0v-.09a1.7 1.7 0 0 0-.86-1.5A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.16-1 1.7 1.7 0 0 0-1.5-.86H3a2 2 0 1 1 0-4h.09a1.7 1.7 0 0 0 1.5-.86A1.7 1.7 0 0 0 4.6 7a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.16 1.7 1.7 0 0 0 .86-1.5V3a2 2 0 1 1 4 0v.09a1.7 1.7 0 0 0 .86 1.5A1.7 1.7 0 0 0 17 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c0 .35.06.69.16 1a1.7 1.7 0 0 0 1.5.86H21a2 2 0 1 1 0 4h-.09a1.7 1.7 0 0 0-1.5.86c-.1.31-.16.65-.16 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
     <main id="mainContent" class="main-shell">
       <section
         id="voiceHero"
@@ -21,23 +54,6 @@
         aria-describedby="voiceHeroStatus"
       >
         <div class="hero-shell">
-          <div class="hero-meta">
-            <div
-              id="connectionStatus"
-              class="connection-status"
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-              aria-label="Connection status: disconnected"
-            >
-              <span class="status-dot"></span>
-              <span class="status-text">Disconnected</span>
-            </div>
-            <div class="scope-info">
-              <span id="scopeTitle" class="scope-title">Waiting for the active page</span>
-            </div>
-          </div>
-
           <div class="hero-stage">
             <div class="voice-orb-shell" aria-hidden="true">
               <canvas id="personaCanvas" class="persona-canvas" width="144" height="144"></canvas>
@@ -94,6 +110,91 @@
         </button>
       </div>
       <div id="diagnosisContent" class="diagnosis-content"></div>
+    </div>
+
+    <div
+      id="liveSettingsDialog"
+      class="settings-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="liveSettingsTitle"
+      aria-describedby="liveSettingsIntro"
+      hidden
+    >
+      <div class="settings-dialog-card">
+        <div class="settings-dialog-header">
+          <div class="settings-dialog-heading">
+            <h2 id="liveSettingsTitle">Northstar Settings</h2>
+            <p id="liveSettingsIntro">Choose how Northstar sounds, how much it thinks before replying, and how live transcripts behave.</p>
+            <p id="liveSettingsSummary" class="settings-dialog-summary">Model default voice · Auto thinking · Both transcripts on</p>
+          </div>
+          <button id="closeLiveSettingsButton" class="btn-icon" type="button" aria-label="Close Northstar settings">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <div class="settings-dialog-content">
+          <section class="settings-subsection" aria-labelledby="liveSettingsVoiceSection">
+            <div>
+              <p id="liveSettingsVoiceSection" class="settings-title">Voice & Replies</p>
+              <p class="settings-subcopy">Pick a voice and decide whether Northstar prioritizes speed or spends a bit more time thinking.</p>
+            </div>
+            <div class="settings-grid">
+              <label class="settings-field" for="settingVoiceName">
+                <span class="settings-label">Voice</span>
+                <select id="settingVoiceName" class="settings-control"></select>
+              </label>
+
+              <label class="settings-field" for="settingThinkingBudget">
+                <span class="settings-label">Thinking</span>
+                <select id="settingThinkingBudget" class="settings-control">
+                  <option value="-1">Automatic</option>
+                  <option value="0">Fast replies</option>
+                  <option value="1024">More reasoning</option>
+                </select>
+              </label>
+            </div>
+          </section>
+
+          <section class="settings-subsection" aria-labelledby="liveSettingsConversationSection">
+            <div>
+              <p id="liveSettingsConversationSection" class="settings-title">Conversation</p>
+              <p class="settings-subcopy">Keep the live captions you care about visible, and choose whether speaking should cut into Northstar's current reply.</p>
+            </div>
+
+            <div class="settings-toggles" role="group" aria-label="Conversation settings">
+              <label class="settings-toggle" for="settingAllowInterruptions">
+                <input id="settingAllowInterruptions" type="checkbox">
+                <span>
+                  <strong>Interrupt when you speak</strong>
+                  <span class="settings-toggle-copy">Let your next utterance cut off Northstar's current spoken response.</span>
+                </span>
+              </label>
+
+              <label class="settings-toggle" for="settingEnableInputTranscription">
+                <input id="settingEnableInputTranscription" type="checkbox">
+                <span>
+                  <strong>User transcripts</strong>
+                  <span class="settings-toggle-copy">Show live transcript text for your microphone input.</span>
+                </span>
+              </label>
+
+              <label class="settings-toggle" for="settingEnableOutputTranscription">
+                <input id="settingEnableOutputTranscription" type="checkbox">
+                <span>
+                  <strong>Assistant transcripts</strong>
+                  <span class="settings-toggle-copy">Show transcript text while Northstar speaks.</span>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <p id="liveSettingsStatus" class="settings-status" role="status" aria-live="polite"></p>
+        </div>
+      </div>
     </div>
 
     <footer id="inputArea" class="input-area" tabindex="-1">

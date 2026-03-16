@@ -3,6 +3,13 @@
  * Real-time Gemini Live audio client plus browser-task UI.
  */
 
+import {
+  LIVE_VOICE_OPTIONS,
+  LIVE_SETTINGS_DEFAULTS,
+  getLiveSettingsSummary,
+  normalizeLiveSettings,
+} from "../shared/live-settings.js";
+
 let currentTabId = null;
 let isListening = false;
 let isRequestingMicrophone = false;
@@ -33,6 +40,8 @@ let personaMicLevel = 0;
 let personaSpeakerLevel = 0;
 let personaWaveformLevel = 0;
 let previouslyFocusedElement = null;
+let liveSettings = normalizeLiveSettings(LIVE_SETTINGS_DEFAULTS);
+let liveSettingsStatusTimer = null;
 
 const SPEECH_THRESHOLD = 0.014;
 const SPEECH_SILENCE_HANG_MS = 650;
@@ -64,10 +73,19 @@ const personaCanvas = document.getElementById("personaCanvas");
 const startVoiceButton = document.getElementById("startVoiceButton");
 const endVoiceButton = document.getElementById("endVoiceButton");
 const showKeyboardButton = document.getElementById("showKeyboardButton");
+const openLiveSettingsButton = document.getElementById("openLiveSettingsButton");
 const textInput = document.getElementById("textInput");
 const textInputWrapper = document.getElementById("textInputWrapper");
 const sendButton = document.getElementById("sendButton");
 const quickActions = document.getElementById("quickActions");
+const liveSettingsDialog = document.getElementById("liveSettingsDialog");
+const liveSettingsSummary = document.getElementById("liveSettingsSummary");
+const liveSettingsStatus = document.getElementById("liveSettingsStatus");
+const settingVoiceName = document.getElementById("settingVoiceName");
+const settingThinkingBudget = document.getElementById("settingThinkingBudget");
+const settingAllowInterruptions = document.getElementById("settingAllowInterruptions");
+const settingEnableInputTranscription = document.getElementById("settingEnableInputTranscription");
+const settingEnableOutputTranscription = document.getElementById("settingEnableOutputTranscription");
 const statusBar = document.getElementById("statusBar");
 const statusText = document.getElementById("statusText");
 const taskApprovalBar = document.getElementById("taskApprovalBar");
@@ -76,6 +94,7 @@ const continueTaskButton = document.getElementById("continueTaskButton");
 const diagnosisPanel = document.getElementById("diagnosisPanel");
 const diagnosisContent = document.getElementById("diagnosisContent");
 const closeDiagnosis = document.getElementById("closeDiagnosis");
+const closeLiveSettingsButton = document.getElementById("closeLiveSettingsButton");
 const conversationEmptyState = document.getElementById("conversationEmptyState");
 const panelAnnouncements = document.getElementById("panelAnnouncements");
 
@@ -87,6 +106,9 @@ async function init() {
   renderUiState();
   updateVoiceHeroPrompt();
   initializePersona();
+  populateVoiceOptions();
+  bindLiveSettingsControls();
+  await loadLiveSettingsFromExtension();
 
   if (!hasChromeApis) {
     return;
@@ -143,6 +165,119 @@ async function init() {
     resizePersona();
   });
   document.addEventListener("keydown", handleGlobalKeydown);
+}
+
+function populateVoiceOptions() {
+  if (!settingVoiceName || settingVoiceName.options.length) {
+    return;
+  }
+
+  const defaultOption = document.createElement("option");
+  defaultOption.value = "";
+  defaultOption.textContent = "Model default";
+  settingVoiceName.append(defaultOption);
+
+  for (const voiceName of LIVE_VOICE_OPTIONS) {
+    const option = document.createElement("option");
+    option.value = voiceName;
+    option.textContent = voiceName;
+    settingVoiceName.append(option);
+  }
+}
+
+function bindLiveSettingsControls() {
+  const controls = [
+    settingVoiceName,
+    settingThinkingBudget,
+    settingAllowInterruptions,
+    settingEnableInputTranscription,
+    settingEnableOutputTranscription,
+  ].filter(Boolean);
+
+  for (const control of controls) {
+    control.addEventListener("change", () => {
+      saveLiveSettingsFromControls().catch((error) => {
+        setLiveSettingsStatus(error?.message || "Could not save Northstar settings.");
+      });
+    });
+  }
+}
+
+function collectLiveSettingsFromControls() {
+  return normalizeLiveSettings({
+    voiceName: settingVoiceName?.value || "",
+    thinkingBudget:
+      settingThinkingBudget?.value ?? String(LIVE_SETTINGS_DEFAULTS.thinkingBudget),
+    allowInterruptions: Boolean(settingAllowInterruptions?.checked),
+    enableInputTranscription: Boolean(settingEnableInputTranscription?.checked),
+    enableOutputTranscription: Boolean(settingEnableOutputTranscription?.checked),
+  });
+}
+
+function applyLiveSettingsToControls(settings) {
+  liveSettings = normalizeLiveSettings(settings);
+  if (settingVoiceName) {
+    settingVoiceName.value = liveSettings.voiceName;
+  }
+  if (settingThinkingBudget) {
+    settingThinkingBudget.value = String(liveSettings.thinkingBudget);
+  }
+  if (settingAllowInterruptions) {
+    settingAllowInterruptions.checked = liveSettings.allowInterruptions;
+  }
+  if (settingEnableInputTranscription) {
+    settingEnableInputTranscription.checked = liveSettings.enableInputTranscription;
+  }
+  if (settingEnableOutputTranscription) {
+    settingEnableOutputTranscription.checked = liveSettings.enableOutputTranscription;
+  }
+  if (liveSettingsSummary) {
+    liveSettingsSummary.textContent = getLiveSettingsSummary(liveSettings);
+  }
+}
+
+async function loadLiveSettingsFromExtension() {
+  if (!hasChromeApis) {
+    applyLiveSettingsToControls(LIVE_SETTINGS_DEFAULTS);
+    return;
+  }
+
+  try {
+    const response = await chrome.runtime.sendMessage({ type: "get_live_settings" });
+    applyLiveSettingsToControls(response?.settings || LIVE_SETTINGS_DEFAULTS);
+  } catch {
+    applyLiveSettingsToControls(LIVE_SETTINGS_DEFAULTS);
+  }
+}
+
+async function saveLiveSettingsFromControls() {
+  if (!hasChromeApis) {
+    applyLiveSettingsToControls(collectLiveSettingsFromControls());
+    return;
+  }
+
+  const response = await chrome.runtime.sendMessage({
+    type: "update_live_settings",
+    data: collectLiveSettingsFromControls(),
+  });
+  if (!response?.ok) {
+    throw new Error(response?.error || "Could not save Northstar settings.");
+  }
+  applyLiveSettingsToControls(response.settings);
+  setLiveSettingsStatus("Northstar settings saved.");
+}
+
+function setLiveSettingsStatus(message) {
+  if (!liveSettingsStatus) {
+    return;
+  }
+  liveSettingsStatus.textContent = message || "";
+  clearTimeout(liveSettingsStatusTimer);
+  if (message) {
+    liveSettingsStatusTimer = setTimeout(() => {
+      liveSettingsStatus.textContent = "";
+    }, 2400);
+  }
 }
 
 function connectToBackend() {
@@ -387,6 +522,10 @@ if (hasChromeApis) {
         handleBrowserTaskStatus(message.data);
         break;
 
+      case "live_settings_updated":
+        applyLiveSettingsToControls(message.settings || LIVE_SETTINGS_DEFAULTS);
+        break;
+
       case "microphone_permission_result":
         handleMicrophonePermissionResult(message.data);
         break;
@@ -472,6 +611,20 @@ continueTaskButton?.addEventListener("click", () => {
       reason: "context_failed",
     });
   });
+});
+
+openLiveSettingsButton?.addEventListener("click", () => {
+  showLiveSettingsDialog();
+});
+
+closeLiveSettingsButton?.addEventListener("click", () => {
+  closeLiveSettingsDialog();
+});
+
+liveSettingsDialog?.addEventListener("click", (event) => {
+  if (event.target === liveSettingsDialog) {
+    closeLiveSettingsDialog();
+  }
 });
 
 async function startListening() {
@@ -1070,7 +1223,7 @@ async function getActiveTab() {
 
 function updateScopeFromTab(tab) {
   const title = tab?.title?.trim();
-  scopeTitle.textContent = title || "Waiting for the active page";
+  scopeTitle.textContent = title || "No active page";
 }
 
 async function syncToActiveTabContext() {
@@ -1105,7 +1258,7 @@ function updateVoiceHeroPrompt() {
   if (isRequestingMicrophone) {
     setVoiceHeroState(
       "idle",
-      "Approve the microphone in the tab that just opened, then return here."
+      "Allow the microphone in the setup tab. Northstar will bring you back here automatically."
     );
     return;
   }
@@ -1134,7 +1287,7 @@ function updateVoiceHeroPrompt() {
   if (microphonePermissionState === "denied") {
     setVoiceHeroState(
       "error",
-      "Microphone permission is blocked. Re-enable it in Chrome, then try again."
+      "Microphone permission is blocked. Re-enable it in Chrome, then run voice setup again."
     );
     return;
   }
@@ -1157,15 +1310,18 @@ function updateVoiceHeroPrompt() {
 
   setVoiceHeroState(
     "idle",
-    "Start voice. Chrome will ask for microphone access once."
+    "Start voice. Northstar will open a setup tab for Chrome's one-time microphone approval."
   );
 }
 
 function showDiagnosis(text) {
+  if (liveSettingsDialog && !liveSettingsDialog.hidden) {
+    closeLiveSettingsDialog();
+  }
   renderDiagnosisContent(text);
   previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-  document.body.classList.add("dialog-open");
   diagnosisPanel.hidden = false;
+  syncDialogBodyState();
   announce("Accessibility diagnosis opened.", "polite");
   queueMicrotask(() => closeDiagnosis.focus());
 }
@@ -1180,25 +1336,74 @@ function closeDiagnosisPanel() {
   }
 
   diagnosisPanel.hidden = true;
-  document.body.classList.remove("dialog-open");
+  syncDialogBodyState();
   if (previouslyFocusedElement?.isConnected) {
     previouslyFocusedElement.focus();
   }
   previouslyFocusedElement = null;
 }
 
-function handleGlobalKeydown(event) {
-  if (event.key === "Escape" && !diagnosisPanel.hidden) {
-    event.preventDefault();
+function showLiveSettingsDialog() {
+  if (!liveSettingsDialog || !closeLiveSettingsButton) {
+    return;
+  }
+  if (diagnosisPanel && !diagnosisPanel.hidden) {
     closeDiagnosisPanel();
+  }
+  previouslyFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+  liveSettingsDialog.hidden = false;
+  openLiveSettingsButton?.setAttribute("aria-expanded", "true");
+  syncDialogBodyState();
+  announce("Northstar settings opened.", "polite");
+  queueMicrotask(() => closeLiveSettingsButton.focus());
+}
+
+function closeLiveSettingsDialog() {
+  if (!liveSettingsDialog || liveSettingsDialog.hidden) {
     return;
   }
 
-  if (event.key !== "Tab" || diagnosisPanel.hidden) {
+  liveSettingsDialog.hidden = true;
+  openLiveSettingsButton?.setAttribute("aria-expanded", "false");
+  syncDialogBodyState();
+  if (previouslyFocusedElement?.isConnected) {
+    previouslyFocusedElement.focus();
+  }
+  previouslyFocusedElement = null;
+}
+
+function getOpenDialog() {
+  if (liveSettingsDialog && !liveSettingsDialog.hidden) {
+    return liveSettingsDialog;
+  }
+  if (diagnosisPanel && !diagnosisPanel.hidden) {
+    return diagnosisPanel;
+  }
+  return null;
+}
+
+function syncDialogBodyState() {
+  document.body.classList.toggle("dialog-open", Boolean(getOpenDialog()));
+}
+
+function handleGlobalKeydown(event) {
+  const openDialog = getOpenDialog();
+
+  if (event.key === "Escape" && openDialog) {
+    event.preventDefault();
+    if (openDialog === liveSettingsDialog) {
+      closeLiveSettingsDialog();
+    } else {
+      closeDiagnosisPanel();
+    }
     return;
   }
 
-  const focusable = getFocusableElements(diagnosisPanel);
+  if (event.key !== "Tab" || !openDialog) {
+    return;
+  }
+
+  const focusable = getFocusableElements(openDialog);
   if (!focusable.length) {
     event.preventDefault();
     return;
@@ -1396,9 +1601,9 @@ async function openMicrophonePermissionTab() {
   setVoiceHeroVisible(true);
   setVoiceHeroState(
     "idle",
-    "Approve the microphone in the tab that just opened, then return here."
+    "Allow the microphone in the setup tab. Northstar will bring you back here automatically."
   );
-  updateStatusState("thinking", "Waiting for microphone permission...");
+  updateStatusState("thinking", "Waiting for microphone setup...");
   const url = chrome.runtime.getURL(
     `mic-permission/index.html?tabId=${encodeURIComponent(String(currentTabId || ""))}`
   );

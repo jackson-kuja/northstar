@@ -127,7 +127,7 @@ source .venv/bin/activate
 pytest tests -q
 ```
 
-Expected result: all backend tests pass. At submission time this returned `33 passed`.
+Expected result: all backend tests pass. At submission time this returned `37 passed`.
 
 ### 2. End-to-end local smoke test
 
@@ -146,9 +146,9 @@ With the backend running on `http://localhost:8080`, the demo site running on `h
 
 Expected results:
 
-- Northstar describes the TechMart demo page and calls out accessibility barriers.
-- Northstar applies the price filter and sort change on the broken UI.
-- Northstar adds an item to the cart and opens checkout.
+- Northstar describes the TechMart demo page and calls out the main accessibility barriers, including the missing language attribute, missing main landmark, unlabeled controls, and non-semantic interactive elements.
+- Northstar applies the budget filter and sort change on the broken UI and the results summary updates to show `4 products under $50` with `Beacon Bluetooth Speaker` as the top result.
+- Northstar adds the top-rated item to the cart and opens checkout.
 - Northstar explains why the flow is difficult on this page and surfaces the barriers it found.
 
 ### 3. Basic backend health check

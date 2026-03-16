@@ -1,427 +1,773 @@
 <!DOCTYPE html>
 <html>
-<!-- Intentionally missing lang attribute — accessibility issue #1 -->
+<!-- Intentionally missing lang attribute -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Intentionally weak title — accessibility issue #2 -->
   <title>Shop</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      color-scheme: light;
+      --ink: #132033;
+      --muted: #5b6675;
+      --surface: #fbf8f1;
+      --surface-strong: #fffdf9;
+      --line: rgba(19, 32, 51, 0.12);
+      --line-strong: rgba(19, 32, 51, 0.2);
+      --accent: #f05a3b;
+      --accent-deep: #c84124;
+      --accent-soft: #ffe7de;
+      --navy: #10243b;
+      --gold: #e4b04f;
+      --green: #21845b;
+      --shadow: 0 18px 50px rgba(16, 36, 59, 0.12);
+    }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #f5f5f7;
-      color: #1d1d1f;
+      font-family: "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(240, 90, 59, 0.08), transparent 26%),
+        radial-gradient(circle at top right, rgba(228, 176, 79, 0.16), transparent 30%),
+        linear-gradient(180deg, #fffdf9 0%, #f5efe2 100%);
+      color: var(--ink);
+      min-height: 100vh;
     }
 
-    /* No semantic <header>, using div — accessibility issue #3 */
-    .site-header {
-      background: #1d1d1f;
-      color: white;
-      padding: 16px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .site-header .logo {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    /* Navigation using divs instead of <nav> — accessibility issue #4 */
-    .nav-links {
-      display: flex;
-      gap: 20px;
-    }
-
-    /* Links styled as divs with onclick — accessibility issue #5 */
-    .nav-link {
-      color: #a1a1a6;
+    .promo-banner {
+      background: linear-gradient(135deg, #183d61 0%, #0f2035 100%);
+      color: #fff7e8;
       cursor: pointer;
       font-size: 14px;
-    }
-    .nav-link:hover { color: white; }
-
-    /* Search with no label — accessibility issue #6 */
-    .search-bar {
-      padding: 16px 24px;
-      background: white;
-      border-bottom: 1px solid #e5e5e7;
+      letter-spacing: 0.02em;
+      padding: 14px 20px;
+      text-align: center;
     }
 
-    .search-bar input {
-      width: 100%;
-      max-width: 400px;
-      padding: 10px 16px;
-      border: 1px solid #d2d2d7;
-      border-radius: 8px;
+    .site-header {
+      align-items: center;
+      background: rgba(16, 36, 59, 0.94);
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      padding: 18px 28px;
+    }
+
+    .brand-block {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .eyebrow {
+      color: rgba(255, 255, 255, 0.56);
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.72);
+      cursor: pointer;
       font-size: 14px;
-      outline: none;
+      user-select: none;
     }
 
-    /* No <main> landmark — accessibility issue #7 */
-    .content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 24px;
+    .nav-link:hover {
+      color: white;
     }
 
-    /* Heading hierarchy skip: H1 missing, starts with H3 — accessibility issue #8 */
-    .section-title {
-      font-size: 24px;
+    .header-actions {
+      align-items: center;
+      display: flex;
+      gap: 10px;
+    }
+
+    .cart-btn {
+      align-items: center;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      color: white;
+      cursor: pointer;
+      display: inline-flex;
+      height: 48px;
+      justify-content: center;
+      position: relative;
+      width: 48px;
+    }
+
+    .cart-btn::before {
+      content: "";
+      background:
+        linear-gradient(currentColor 0 0) 50% 70% / 18px 2px no-repeat,
+        linear-gradient(currentColor 0 0) 44% 42% / 16px 2px no-repeat,
+        linear-gradient(currentColor 0 0) 62% 42% / 6px 2px no-repeat,
+        radial-gradient(circle, currentColor 0 2px, transparent 2.4px) 36% 82% / 8px 8px no-repeat,
+        radial-gradient(circle, currentColor 0 2px, transparent 2.4px) 66% 82% / 8px 8px no-repeat;
+      display: block;
+      height: 24px;
+      width: 24px;
+    }
+
+    .cart-badge {
+      align-items: center;
+      background: var(--accent);
+      border-radius: 999px;
+      color: white;
+      display: inline-flex;
+      font-size: 12px;
       font-weight: 700;
-      margin-bottom: 8px;
+      height: 26px;
+      justify-content: center;
+      min-width: 26px;
+      padding: 0 8px;
+    }
+
+    .search-row {
+      background: rgba(255, 255, 255, 0.92);
+      border-bottom: 1px solid var(--line);
+      padding: 18px 28px;
+    }
+
+    .search-row input {
+      background: white;
+      border: 1px solid rgba(19, 32, 51, 0.08);
+      border-radius: 14px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      font-size: 15px;
+      outline: none;
+      padding: 14px 18px;
+      width: min(480px, 100%);
+    }
+
+    .page-shell {
+      display: grid;
+      gap: 24px;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      margin: 0 auto;
+      max-width: 1440px;
+      padding: 28px;
+    }
+
+    .story-card,
+    .rail-card {
+      background: rgba(255, 253, 249, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .story-card {
+      padding: 28px;
+    }
+
+    .story-card::before,
+    .rail-card::before {
+      background: linear-gradient(90deg, var(--accent), var(--gold));
+      content: "";
+      display: block;
+      height: 6px;
+      width: 100%;
+    }
+
+    .section-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.05em;
+      margin-bottom: 10px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 28px;
+      max-width: 760px;
+    }
+
+    .control-stack {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .sort-control,
+    .price-filter {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .sort-control span,
+    .price-filter span,
+    .filters-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sort-control select,
+    .price-filter input {
+      background: white;
+      border: 1px solid rgba(19, 32, 51, 0.12);
+      border-radius: 12px;
+      font-size: 14px;
+      min-height: 44px;
+      padding: 10px 14px;
     }
 
     .filters {
+      align-items: center;
       display: flex;
-      gap: 12px;
-      margin-bottom: 24px;
       flex-wrap: wrap;
+      gap: 10px;
     }
 
-    /* Filter "buttons" are spans with onclick — accessibility issue #9 */
     .filter-btn {
-      padding: 8px 16px;
-      background: #e5e5e7;
-      border-radius: 20px;
-      font-size: 13px;
+      background: #efe6d7;
+      border-radius: 999px;
+      color: var(--ink);
       cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 16px;
       user-select: none;
     }
+
     .filter-btn.active {
-      background: #1d1d1f;
+      background: var(--ink);
       color: white;
     }
-    .filter-btn:hover {
-      background: #d2d2d7;
-    }
-    .filter-btn.active:hover {
-      background: #333;
+
+    .filter-btn.callout {
+      background: var(--accent);
+      color: white;
     }
 
-    .price-filter {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .summary-strip {
+      background: linear-gradient(135deg, rgba(240, 90, 59, 0.08), rgba(228, 176, 79, 0.14));
+      border: 1px solid rgba(240, 90, 59, 0.12);
+      border-radius: 20px;
       margin-bottom: 24px;
+      padding: 18px 20px;
     }
 
-    /* Input with no label, just placeholder — accessibility issue #10 */
-    .price-filter input {
-      width: 80px;
-      padding: 8px 12px;
-      border: 1px solid #d2d2d7;
-      border-radius: 6px;
-      font-size: 13px;
+    .summary-strip h4 {
+      font-size: 21px;
+      letter-spacing: -0.03em;
+    }
+
+    .summary-strip p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      margin-top: 8px;
     }
 
     .product-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
     }
 
     .product-card {
       background: white;
-      border-radius: 12px;
+      border: 1px solid rgba(19, 32, 51, 0.08);
+      border-radius: 22px;
+      display: flex;
+      flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-      transition: transform 0.2s;
+      position: relative;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
+
     .product-card:hover {
+      box-shadow: 0 16px 30px rgba(16, 36, 59, 0.08);
       transform: translateY(-2px);
     }
 
-    /* Images with no alt text — accessibility issue #11 */
+    .product-card.top-result {
+      border-color: rgba(33, 132, 91, 0.36);
+      box-shadow: inset 0 0 0 1px rgba(33, 132, 91, 0.2);
+    }
+
+    .rank-chip {
+      background: rgba(33, 132, 91, 0.12);
+      border-radius: 999px;
+      color: var(--green);
+      display: inline-flex;
+      font-size: 12px;
+      font-weight: 800;
+      left: 16px;
+      letter-spacing: 0.05em;
+      padding: 8px 12px;
+      position: absolute;
+      text-transform: uppercase;
+      top: 16px;
+      z-index: 2;
+    }
+
     .product-image {
+      background: linear-gradient(145deg, rgba(240, 90, 59, 0.15), rgba(19, 32, 51, 0.04));
+      border-bottom: 1px solid rgba(19, 32, 51, 0.06);
+      display: block;
+      height: 185px;
+      object-fit: cover;
       width: 100%;
-      height: 200px;
-      background: #e5e5e7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #a1a1a6;
-      font-size: 48px;
     }
 
     .product-info {
-      padding: 16px;
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 10px;
+      padding: 18px;
+    }
+
+    .product-kicker {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
     .product-name {
-      font-weight: 600;
-      font-size: 15px;
-      margin-bottom: 4px;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+    }
+
+    .product-price-row {
+      align-items: baseline;
+      display: flex;
+      gap: 8px;
     }
 
     .product-price {
-      color: #1d1d1f;
-      font-weight: 700;
-      font-size: 17px;
-      margin-bottom: 8px;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
     }
 
     .product-rating {
-      color: #f5a623;
+      color: var(--gold);
       font-size: 13px;
+      font-weight: 700;
+    }
+
+    .product-note {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 42px;
+    }
+
+    .add-to-cart {
+      background: var(--ink);
+      border: none;
+      border-radius: 14px;
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      margin-top: auto;
+      min-height: 46px;
+      width: 100%;
+    }
+
+    .demo-rail {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 24px;
+      align-self: start;
+    }
+
+    .rail-card {
+      padding: 22px;
+    }
+
+    .rail-kicker {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .rail-card h4 {
+      font-size: 24px;
+      letter-spacing: -0.04em;
       margin-bottom: 12px;
     }
 
-    /* Button with no text, just an icon — accessibility issue #12 */
-    .add-to-cart {
-      width: 100%;
-      padding: 10px;
-      background: #1d1d1f;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .add-to-cart:hover {
-      background: #333;
+    .broken-list {
+      color: var(--muted);
+      display: grid;
+      gap: 10px;
+      list-style: none;
     }
 
-    /* Cart icon button with no label — accessibility issue #13 */
-    .cart-btn {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 20px;
-      cursor: pointer;
-      position: relative;
+    .broken-list li {
+      background: rgba(19, 32, 51, 0.04);
+      border-radius: 14px;
+      line-height: 1.45;
+      padding: 10px 12px;
     }
 
-    .cart-badge {
-      position: absolute;
-      top: -6px;
-      right: -8px;
-      background: #ff3b30;
-      color: white;
-      font-size: 10px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .event-feed {
+      display: grid;
+      gap: 10px;
     }
 
-    /* Modal with no focus trap — accessibility issue #14 */
+    .event-item {
+      background: rgba(240, 90, 59, 0.08);
+      border-radius: 16px;
+      line-height: 1.45;
+      padding: 12px 14px;
+    }
+
+    .event-step {
+      color: var(--accent-deep);
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .order-state {
+      display: grid;
+      gap: 12px;
+    }
+
+    .state-pill {
+      background: rgba(19, 32, 51, 0.05);
+      border-radius: 18px;
+      color: var(--ink);
+      padding: 14px 16px;
+    }
+
+    .state-pill strong {
+      display: block;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
     .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.5);
-      z-index: 100;
-      justify-content: center;
       align-items: center;
+      background: rgba(6, 16, 27, 0.58);
+      display: none;
+      inset: 0;
+      justify-content: center;
+      padding: 22px;
+      position: fixed;
+      z-index: 100;
     }
+
     .modal-overlay.active {
       display: flex;
     }
 
     .modal {
       background: white;
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 480px;
-      width: 90%;
+      border-radius: 28px;
+      box-shadow: 0 28px 70px rgba(6, 16, 27, 0.28);
+      max-height: 90vh;
+      max-width: 540px;
+      overflow: auto;
+      padding: 30px;
+      position: relative;
+      width: 100%;
     }
 
     .modal h2 {
-      font-size: 20px;
-      margin-bottom: 16px;
+      font-size: 32px;
+      letter-spacing: -0.05em;
+      margin-bottom: 8px;
+    }
+
+    .modal-note {
+      color: var(--muted);
+      line-height: 1.5;
+      margin-bottom: 22px;
     }
 
     .form-group {
       margin-bottom: 16px;
     }
 
-    /* Some labels present, some missing — mixed accessibility */
     .form-group label {
+      color: var(--muted);
       display: block;
       font-size: 13px;
-      font-weight: 500;
-      margin-bottom: 4px;
-      color: #6e6e73;
-    }
-
-    .form-group input, .form-group select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d2d2d7;
-      border-radius: 8px;
-      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
     }
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr 1fr;
       gap: 12px;
+      grid-template-columns: 1fr 1fr;
     }
 
-    /* Two identical "Submit" buttons — accessibility issue #15 */
-    .submit-btn {
-      width: 100%;
-      padding: 12px;
-      background: #1d1d1f;
-      color: white;
-      border: none;
-      border-radius: 8px;
+    .form-group input {
+      border: 1px solid rgba(19, 32, 51, 0.14);
+      border-radius: 14px;
       font-size: 15px;
-      font-weight: 600;
+      min-height: 46px;
+      padding: 12px 14px;
+      width: 100%;
+    }
+
+    .submit-btn {
+      background: var(--ink);
+      border: none;
+      border-radius: 16px;
+      color: white;
       cursor: pointer;
-      margin-top: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      margin-top: 12px;
+      min-height: 50px;
+      width: 100%;
+    }
+
+    .submit-btn.secondary {
+      background: #6c7382;
+      margin-top: 10px;
     }
 
     .close-modal {
-      position: absolute;
-      top: 16px;
-      right: 16px;
-      background: none;
+      align-items: center;
+      background: rgba(19, 32, 51, 0.05);
       border: none;
-      font-size: 24px;
+      border-radius: 999px;
       cursor: pointer;
-      color: #6e6e73;
+      display: inline-flex;
+      font-size: 22px;
+      height: 38px;
+      justify-content: center;
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      width: 38px;
     }
 
     .toast {
-      position: fixed;
-      bottom: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: #1d1d1f;
+      background: var(--ink);
+      border-radius: 18px;
+      bottom: 26px;
       color: white;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      transition: transform 0.3s;
+      left: 50%;
+      max-width: calc(100vw - 32px);
+      padding: 14px 18px;
+      position: fixed;
+      transform: translate(-50%, 120px);
+      transition: transform 0.28s ease;
       z-index: 200;
     }
+
     .toast.show {
-      transform: translateX(-50%) translateY(0);
+      transform: translate(-50%, 0);
     }
 
-    /* Sort dropdown with no label — accessibility issue #16 */
-    .sort-control {
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sort-control select {
-      padding: 8px 12px;
-      border: 1px solid #d2d2d7;
-      border-radius: 6px;
-      font-size: 13px;
-      background: white;
-    }
-
-    /* Positive tabindex — accessibility issue #17 */
-    .promo-banner {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      padding: 16px 24px;
-      text-align: center;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    /* Footer with low contrast text — accessibility issue #18 */
     .site-footer {
-      background: #f5f5f7;
-      padding: 32px 24px;
-      text-align: center;
-      color: #d2d2d7;
+      color: #d5cec2;
       font-size: 12px;
-      margin-top: 48px;
+      margin-top: 8px;
+      padding: 28px;
+      text-align: center;
+    }
+
+    @media (max-width: 1100px) {
+      .page-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .demo-rail {
+        position: static;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .site-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .page-shell,
+      .story-card,
+      .rail-card,
+      .modal {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-
-  <!-- Promo banner with positive tabindex -->
-  <div class="promo-banner" tabindex="5" onclick="alert('Promo clicked')">
-    Free shipping on orders over $50 — Shop Now
+  <div class="promo-banner" tabindex="5" onclick="void(0)">
+    48-hour warehouse drop: mystery markdowns, unlabeled filters, and one very broken checkout.
   </div>
 
-  <!-- Non-semantic header -->
   <div class="site-header">
-    <div class="logo">TechMart</div>
+    <div class="brand-block">
+      <div class="eyebrow">Northstar challenge demo</div>
+      <div class="logo">TechMart</div>
+    </div>
+
     <div class="nav-links">
       <div class="nav-link" onclick="void(0)">Products</div>
-      <div class="nav-link" onclick="void(0)">Deals</div>
+      <div class="nav-link" onclick="void(0)">Bundles</div>
       <div class="nav-link" onclick="void(0)">Support</div>
     </div>
-    <!-- Cart button with no accessible label -->
-    <button class="cart-btn" onclick="openCart()">
-      🛒
-      <span class="cart-badge" id="cartCount">0</span>
-    </button>
-  </div>
 
-  <!-- Search with no label -->
-  <div class="search-bar">
-    <input type="text" placeholder="Search products...">
-  </div>
-
-  <!-- No main landmark wrapper -->
-  <div class="content">
-    <!-- H3 instead of H1 — skipped heading levels -->
-    <h3 class="section-title">Featured Products</h3>
-
-    <!-- Sort with no label -->
-    <div class="sort-control">
-      <span>Sort:</span>
-      <select id="sortSelect" onchange="sortProducts()">
-        <option value="featured">Featured</option>
-        <option value="price-low">Price: Low to High</option>
-        <option value="price-high">Price: High to Low</option>
-        <option value="rating">Top Rated</option>
-      </select>
-    </div>
-
-    <!-- Filters using non-semantic spans -->
-    <div class="filters" id="filters">
-      <span class="filter-btn active" onclick="toggleFilter(this, 'all')">All</span>
-      <span class="filter-btn" onclick="toggleFilter(this, 'audio')">Audio</span>
-      <span class="filter-btn" onclick="toggleFilter(this, 'wearable')">Wearables</span>
-      <span class="filter-btn" onclick="toggleFilter(this, 'accessories')">Accessories</span>
-    </div>
-
-    <!-- Price filter with unlabeled inputs -->
-    <div class="price-filter">
-      <span>Price:</span>
-      <input type="number" id="minPrice" placeholder="Min" value="0">
-      <span>to</span>
-      <input type="number" id="maxPrice" placeholder="Max" value="500">
-      <!-- div acting as button -->
-      <div class="filter-btn" onclick="applyPriceFilter()" style="background:#1d1d1f;color:white;">Apply</div>
-    </div>
-
-    <!-- Product grid -->
-    <div class="product-grid" id="productGrid">
+    <div class="header-actions">
+      <button class="cart-btn" onclick="openCheckout()"></button>
+      <div class="cart-badge" id="cartCount">0</div>
     </div>
   </div>
 
-  <!-- Checkout modal without focus trap -->
+  <div class="search-row">
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search products, brands, or vibes"
+      oninput="applyFiltersAndSort()"
+    >
+  </div>
+
+  <div class="page-shell">
+    <div class="content">
+      <div class="story-card">
+        <h3 class="section-title">Featured products</h3>
+        <p class="lead">
+          Northstar's ideal playground: a visually polished storefront with broken semantics,
+          repeated labels, and state changes that are obvious on screen but unreliable for assistive tech.
+        </p>
+
+        <div class="control-stack">
+          <div class="sort-control">
+            <span>Sort</span>
+            <select id="sortSelect" onchange="sortProducts()">
+              <option value="featured">Featured</option>
+              <option value="rating">Top Rated</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+          </div>
+
+          <div class="filters">
+            <div class="filters-label">Category</div>
+            <span class="filter-btn active" onclick="selectCategory(this, 'all')">All</span>
+            <span class="filter-btn" onclick="selectCategory(this, 'audio')">Audio</span>
+            <span class="filter-btn" onclick="selectCategory(this, 'desk')">Desk</span>
+            <span class="filter-btn" onclick="selectCategory(this, 'travel')">Travel</span>
+            <span class="filter-btn" onclick="selectCategory(this, 'smart-home')">Smart Home</span>
+          </div>
+
+          <div class="price-filter">
+            <span>Budget</span>
+            <input type="number" id="minPrice" placeholder="Min" value="0">
+            <span>to</span>
+            <input type="number" id="maxPrice" placeholder="Max" value="500">
+            <div class="filter-btn callout" onclick="applyPriceFilter()">Apply</div>
+          </div>
+        </div>
+
+        <div class="summary-strip">
+          <h4 id="resultsSummary">8 products. Top result: Beacon Bluetooth Speaker at $39.99.</h4>
+          <p id="resultsDetail">Featured order. All categories visible. Several controls are intentionally broken.</p>
+        </div>
+
+        <div class="product-grid" id="productGrid"></div>
+      </div>
+    </div>
+
+    <div class="demo-rail">
+      <div class="rail-card">
+        <div class="rail-kicker">Diagnosis hooks</div>
+        <h4>Broken by design</h4>
+        <ul class="broken-list">
+          <li>No language attribute, no main landmark, and no H1.</li>
+          <li>Navigation and category controls are clickable divs and spans.</li>
+          <li>Search, budget, and several checkout fields have no labels.</li>
+          <li>The cart button is icon-only, the toast has no live region, and checkout has duplicate submit buttons.</li>
+          <li>Results visibly change, but the page still makes users work too hard to understand what happened.</li>
+        </ul>
+      </div>
+
+      <div class="rail-card">
+        <div class="rail-kicker">Visible state changes</div>
+        <h4>What just happened</h4>
+        <div class="event-feed" id="eventFeed"></div>
+      </div>
+
+      <div class="rail-card">
+        <div class="rail-kicker">Order state</div>
+        <h4>Cart + receipt</h4>
+        <div class="order-state">
+          <div class="state-pill" id="orderState">
+            <strong>Cart</strong>
+            Empty cart.
+          </div>
+          <div class="state-pill" id="receiptState">
+            <strong>Receipt</strong>
+            No order submitted yet.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="checkoutModal">
-    <div class="modal" style="position:relative;">
-      <button class="close-modal" onclick="closeModal()">×</button>
+    <div class="modal">
+      <button class="close-modal" onclick="closeModal()">&times;</button>
       <h2>Checkout</h2>
+      <p class="modal-note">
+        This modal opens, but it does not trap focus. Several fields rely on placeholders instead of labels.
+      </p>
 
       <div class="form-group">
         <label for="fullName">Full Name</label>
-        <input type="text" id="fullName" placeholder="John Doe">
+        <input type="text" id="fullName" placeholder="Jane Doe">
       </div>
 
       <div class="form-group">
-        <!-- Missing label — just placeholder -->
         <input type="email" placeholder="Email address">
       </div>
 
@@ -432,11 +778,9 @@
 
       <div class="form-row">
         <div class="form-group">
-          <!-- Missing label -->
           <input type="text" placeholder="City">
         </div>
         <div class="form-group">
-          <!-- Missing label -->
           <input type="text" placeholder="ZIP Code">
         </div>
       </div>
@@ -448,140 +792,347 @@
 
       <div class="form-row">
         <div class="form-group">
-          <!-- Missing label -->
           <input type="text" placeholder="MM/YY">
         </div>
         <div class="form-group">
-          <!-- Missing label -->
           <input type="text" placeholder="CVV">
         </div>
       </div>
 
-      <!-- Two submit buttons with identical text -->
       <button class="submit-btn" onclick="submitOrder()">Place Order</button>
-      <button class="submit-btn" onclick="submitOrder()" style="background:#6e6e73;margin-top:8px;">Place Order</button>
+      <button class="submit-btn secondary" onclick="submitOrder()">Place Order</button>
     </div>
   </div>
 
-  <!-- Toast notification — no aria-live -->
   <div class="toast" id="toast"></div>
 
-  <!-- Low contrast footer -->
   <div class="site-footer">
-    <p>© 2026 TechMart. All rights reserved. Terms · Privacy · Contact</p>
+    &copy; 2026 TechMart. Terms. Privacy. Returns. Warehouse location unavailable.
   </div>
 
   <script>
-    // Product data
     const products = [
-      { id: 1, name: "Wireless Headphones Pro", price: 89.99, rating: 4.5, category: "audio", image: "🎧" },
-      { id: 2, name: "Smart Watch Ultra", price: 249.99, rating: 4.8, category: "wearable", image: "⌚" },
-      { id: 3, name: "Bluetooth Speaker", price: 39.99, rating: 4.2, category: "audio", image: "🔊" },
-      { id: 4, name: "USB-C Hub 7-in-1", price: 29.99, rating: 4.0, category: "accessories", image: "🔌" },
-      { id: 5, name: "Noise Cancelling Earbuds", price: 129.99, rating: 4.7, category: "audio", image: "🎵" },
-      { id: 6, name: "Fitness Tracker Band", price: 49.99, rating: 4.1, category: "wearable", image: "📱" },
-      { id: 7, name: "Wireless Charging Pad", price: 24.99, rating: 3.9, category: "accessories", image: "⚡" },
-      { id: 8, name: "Premium Headphone Stand", price: 34.99, rating: 4.3, category: "accessories", image: "🎯" },
+      {
+        id: 1,
+        name: "Beacon Bluetooth Speaker",
+        price: 39.99,
+        rating: 4.8,
+        category: "audio",
+        badge: "Room-filling sound",
+        note: "Portable speaker with oversized controls and a glowing battery ring.",
+        artLabel: "B"
+      },
+      {
+        id: 2,
+        name: "Atlas Smart Lamp",
+        price: 119.00,
+        rating: 4.6,
+        category: "smart-home",
+        badge: "Adaptive scenes",
+        note: "Desk lamp with motion presets and warm evening automation.",
+        artLabel: "A"
+      },
+      {
+        id: 3,
+        name: "Vector Travel Charger",
+        price: 59.00,
+        rating: 4.1,
+        category: "travel",
+        badge: "3-country kit",
+        note: "Compact charger brick with USB-C, USB-A, and slide-out adapters.",
+        artLabel: "V"
+      },
+      {
+        id: 4,
+        name: "Northstar Headphone Stand",
+        price: 34.99,
+        rating: 4.7,
+        category: "desk",
+        badge: "Machined aluminum",
+        note: "Minimal stand that keeps over-ear headphones off the desk.",
+        artLabel: "N"
+      },
+      {
+        id: 5,
+        name: "Signal USB-C Hub",
+        price: 29.99,
+        rating: 4.5,
+        category: "desk",
+        badge: "7 ports",
+        note: "Compact hub with HDMI, power passthrough, and SD card slots.",
+        artLabel: "S"
+      },
+      {
+        id: 6,
+        name: "Orbit Noise Cancelling Earbuds",
+        price: 149.00,
+        rating: 4.9,
+        category: "audio",
+        badge: "Commute favorite",
+        note: "In-ear buds with adaptive ANC and a bright charging case.",
+        artLabel: "O"
+      },
+      {
+        id: 7,
+        name: "Pulse Wireless Charging Pad",
+        price: 24.99,
+        rating: 4.2,
+        category: "desk",
+        badge: "Magnetic snap",
+        note: "Slim charging pad with a copper accent ring and rubber base.",
+        artLabel: "P"
+      },
+      {
+        id: 8,
+        name: "Nomad Mini Projector",
+        price: 219.00,
+        rating: 4.4,
+        category: "travel",
+        badge: "Pocket cinema",
+        note: "Palm-sized projector with auto-keystone and hidden speakers.",
+        artLabel: "M"
+      }
     ];
 
+    let activeCategory = "all";
     let cart = [];
-    let activeFilter = "all";
+    let eventCounter = 0;
+    let orderCounter = 0;
+
+    function createProductArt(product) {
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="#fff4ed" />
+              <stop offset="100%" stop-color="#e6eef7" />
+            </linearGradient>
+          </defs>
+          <rect width="480" height="320" rx="36" fill="url(#g)" />
+          <circle cx="108" cy="88" r="86" fill="#f7d2c7" />
+          <circle cx="388" cy="232" r="104" fill="#dfe8f4" />
+          <rect x="110" y="76" width="260" height="168" rx="30" fill="#132033" opacity="0.88" />
+          <text x="240" y="178" text-anchor="middle" fill="#fff7e8" font-family="Avenir Next, Segoe UI, sans-serif" font-size="82" font-weight="800">${product.artLabel}</text>
+          <text x="240" y="278" text-anchor="middle" fill="#5b6675" font-family="Avenir Next, Segoe UI, sans-serif" font-size="20" font-weight="700">${product.name}</text>
+        </svg>
+      `;
+      return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+    }
+
+    function getSortValue() {
+      return document.getElementById("sortSelect").value;
+    }
+
+    function getSearchValue() {
+      return document.getElementById("searchInput").value.trim().toLowerCase();
+    }
+
+    function getBudgetRange() {
+      return {
+        min: parseFloat(document.getElementById("minPrice").value) || 0,
+        max: parseFloat(document.getElementById("maxPrice").value) || Infinity
+      };
+    }
+
+    function getVisibleProducts() {
+      const query = getSearchValue();
+      const budget = getBudgetRange();
+      let items = products.filter((product) => {
+        const matchesCategory = activeCategory === "all" || product.category === activeCategory;
+        const matchesBudget = product.price >= budget.min && product.price <= budget.max;
+        const matchesQuery = !query || `${product.name} ${product.badge} ${product.note}`.toLowerCase().includes(query);
+        return matchesCategory && matchesBudget && matchesQuery;
+      });
+
+      switch (getSortValue()) {
+        case "rating":
+          items = items.sort((a, b) => b.rating - a.rating || a.price - b.price);
+          break;
+        case "price-low":
+          items = items.sort((a, b) => a.price - b.price || b.rating - a.rating);
+          break;
+        case "price-high":
+          items = items.sort((a, b) => b.price - a.price || b.rating - a.rating);
+          break;
+        default:
+          items = items.sort((a, b) => a.id - b.id);
+          break;
+      }
+
+      return items;
+    }
 
     function renderProducts(items) {
       const grid = document.getElementById("productGrid");
-      grid.innerHTML = items.map(p => `
-        <div class="product-card" data-category="${p.category}" data-price="${p.price}">
-          <!-- Image div instead of img, no alt — accessibility issue -->
-          <div class="product-image">${p.image}</div>
-          <div class="product-info">
-            <div class="product-name">${p.name}</div>
-            <div class="product-price">$${p.price.toFixed(2)}</div>
-            <div class="product-rating">${"★".repeat(Math.floor(p.rating))}${"☆".repeat(5 - Math.floor(p.rating))} ${p.rating}</div>
-            <!-- Button says "Add" but has no context about what -->
-            <button class="add-to-cart" onclick="addToCart(${p.id})">Add</button>
+      grid.innerHTML = items.map((product, index) => {
+        const topChip = index === 0 ? '<div class="rank-chip">Top result</div>' : "";
+        const topClass = index === 0 ? " top-result" : "";
+        return `
+          <div class="product-card${topClass}" data-category="${product.category}" data-price="${product.price}" data-name="${product.name}">
+            ${topChip}
+            <img class="product-image" src="${createProductArt(product)}">
+            <div class="product-info">
+              <div class="product-kicker">${product.badge}</div>
+              <div class="product-name">${product.name}</div>
+              <div class="product-price-row">
+                <div class="product-price">$${product.price.toFixed(2)}</div>
+                <div class="product-rating">${renderStars(product.rating)} ${product.rating.toFixed(1)}</div>
+              </div>
+              <div class="product-note">${product.note}</div>
+              <button class="add-to-cart" onclick="addToCart(${product.id})">Add</button>
+            </div>
           </div>
-        </div>
-      `).join("");
+        `;
+      }).join("");
     }
 
-    function toggleFilter(el, category) {
-      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    function renderStars(rating) {
+      const rounded = Math.round(rating);
+      return `${"★".repeat(rounded)}${"☆".repeat(Math.max(0, 5 - rounded))}`;
+    }
+
+    function buildSummaryLine(items) {
+      if (!items.length) {
+        return "0 products match the current controls.";
+      }
+      const top = items[0];
+      const budget = getBudgetRange();
+      const underBudget = Number.isFinite(budget.max) ? ` under $${budget.max.toFixed(0)}` : "";
+      return `${items.length} product${items.length === 1 ? "" : "s"}${underBudget}. Top result: ${top.name} at $${top.price.toFixed(2)}.`;
+    }
+
+    function buildDetailLine(items) {
+      const sortMap = {
+        featured: "Featured order",
+        rating: "Sorted by rating",
+        "price-low": "Sorted by low price",
+        "price-high": "Sorted by high price"
+      };
+      const query = getSearchValue();
+      const category = activeCategory === "all" ? "all categories" : `${activeCategory} only`;
+      if (!items.length) {
+        return `No results available. Current view uses ${category}.`;
+      }
+      return `${sortMap[getSortValue()]}. Showing ${category}.${query ? ` Search term: ${query}.` : ""}`;
+    }
+
+    function updateSummary(items) {
+      document.getElementById("resultsSummary").textContent = buildSummaryLine(items);
+      document.getElementById("resultsDetail").textContent = buildDetailLine(items);
+    }
+
+    function updateCartState() {
+      const count = document.getElementById("cartCount");
+      const orderState = document.getElementById("orderState");
+      count.textContent = String(cart.length);
+
+      if (!cart.length) {
+        orderState.innerHTML = "<strong>Cart</strong>Empty cart.";
+        return;
+      }
+
+      const list = cart.map((product) => product.name).join(", ");
+      orderState.innerHTML = `<strong>Cart</strong>${cart.length} item${cart.length === 1 ? "" : "s"}: ${list}.`;
+    }
+
+    function pushEvent(message) {
+      eventCounter += 1;
+      const feed = document.getElementById("eventFeed");
+      const item = document.createElement("div");
+      item.className = "event-item";
+      item.innerHTML = `<span class="event-step">Step ${eventCounter}</span>${message}`;
+      feed.prepend(item);
+      while (feed.children.length > 5) {
+        feed.removeChild(feed.lastChild);
+      }
+    }
+
+    function applyFiltersAndSort() {
+      const items = getVisibleProducts();
+      renderProducts(items);
+      updateSummary(items);
+      return items;
+    }
+
+    function selectCategory(el, category) {
+      document.querySelectorAll(".filters .filter-btn").forEach((button) => {
+        button.classList.remove("active");
+      });
       el.classList.add("active");
-      activeFilter = category;
-      applyFilters();
+      activeCategory = category;
+      const items = applyFiltersAndSort();
+      pushEvent(`Category set to ${el.textContent}. ${buildSummaryLine(items)}`);
     }
 
     function applyPriceFilter() {
-      applyFilters();
-    }
-
-    function applyFilters() {
-      const min = parseFloat(document.getElementById("minPrice").value) || 0;
-      const max = parseFloat(document.getElementById("maxPrice").value) || Infinity;
-
-      let filtered = products;
-      if (activeFilter !== "all") {
-        filtered = filtered.filter(p => p.category === activeFilter);
-      }
-      filtered = filtered.filter(p => p.price >= min && p.price <= max);
-
-      renderProducts(filtered);
+      const items = applyFiltersAndSort();
+      pushEvent(`Budget filter applied. ${buildSummaryLine(items)}`);
     }
 
     function sortProducts() {
-      const sort = document.getElementById("sortSelect").value;
-      let sorted = [...products];
-
-      if (activeFilter !== "all") {
-        sorted = sorted.filter(p => p.category === activeFilter);
-      }
-
-      switch (sort) {
-        case "price-low": sorted.sort((a, b) => a.price - b.price); break;
-        case "price-high": sorted.sort((a, b) => b.price - a.price); break;
-        case "rating": sorted.sort((a, b) => b.rating - a.rating); break;
-      }
-
-      renderProducts(sorted);
+      const label = document.getElementById("sortSelect").selectedOptions[0].textContent;
+      const items = applyFiltersAndSort();
+      pushEvent(`Sort changed to ${label}. ${buildSummaryLine(items)}`);
     }
 
     function addToCart(id) {
-      const product = products.find(p => p.id === id);
+      const product = products.find((entry) => entry.id === id);
+      if (!product) {
+        return;
+      }
       cart.push(product);
-      document.getElementById("cartCount").textContent = cart.length;
+      updateCartState();
       showToast(`${product.name} added to cart`);
+      pushEvent(`${product.name} added to cart. The button only says Add, so the card context does all the work.`);
     }
 
-    function openCart() {
-      if (cart.length === 0) {
+    function openCheckout() {
+      if (!cart.length) {
         showToast("Your cart is empty");
+        pushEvent("Checkout blocked because the cart is empty.");
         return;
       }
       document.getElementById("checkoutModal").classList.add("active");
-      // No focus management — accessibility issue
+      pushEvent(`Checkout opened with ${cart.length} item${cart.length === 1 ? "" : "s"} in the cart.`);
     }
 
     function closeModal() {
       document.getElementById("checkoutModal").classList.remove("active");
-      // Focus not returned to trigger — accessibility issue
+      pushEvent("Checkout modal closed.");
     }
 
     function submitOrder() {
-      showToast("Order submitted! (demo)");
-      closeModal();
+      if (!cart.length) {
+        showToast("Add an item first");
+        pushEvent("Order submission failed because the cart was empty.");
+        return;
+      }
+
+      orderCounter += 1;
+      const orderId = `TM-${String(orderCounter).padStart(3, "0")}`;
+      const items = cart.map((product) => product.name).join(", ");
+      document.getElementById("receiptState").innerHTML =
+        `<strong>Receipt</strong>Order ${orderId} confirmed for ${items}.`;
       cart = [];
-      document.getElementById("cartCount").textContent = "0";
+      updateCartState();
+      document.getElementById("checkoutModal").classList.remove("active");
+      showToast(`Order ${orderId} submitted`);
+      pushEvent(`Order ${orderId} submitted. Two identical Place Order buttons are still visible in the modal.`);
     }
 
-    function showToast(msg) {
+    function showToast(message) {
       const toast = document.getElementById("toast");
-      toast.textContent = msg;
+      toast.textContent = message;
       toast.classList.add("show");
-      setTimeout(() => toast.classList.remove("show"), 3000);
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3200);
     }
 
-    // Initial render
-    renderProducts(products);
+    applyFiltersAndSort();
+    updateCartState();
+    pushEvent("Demo page ready. Ask Northstar to describe the page, filter under $50, add the top result, and complete checkout.");
   </script>
 </body>
 </html>

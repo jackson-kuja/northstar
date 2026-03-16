@@ -1,0 +1,267 @@
+@import url("../shared/theme.css");
+
+body {
+  min-height: 100%;
+  background:
+    radial-gradient(circle at top, rgba(31, 52, 70, 0.12), transparent 38%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(244, 240, 231, 0)),
+    var(--bg);
+}
+
+.permission-app {
+  min-height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.permission-shell {
+  width: min(640px, 100%);
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: var(--shadow-lg);
+  backdrop-filter: blur(16px);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.permission-shell[data-state="working"] {
+  border-color: rgba(31, 52, 70, 0.22);
+}
+
+.permission-shell[data-state="success"] {
+  border-color: rgba(58, 107, 94, 0.24);
+  box-shadow: 0 22px 48px rgba(58, 107, 94, 0.12);
+}
+
+.permission-shell[data-state="error"] {
+  border-color: rgba(164, 81, 69, 0.24);
+  box-shadow: 0 22px 48px rgba(164, 81, 69, 0.12);
+}
+
+.permission-hero {
+  display: grid;
+  gap: 12px;
+}
+
+.permission-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.permission-badge::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 6px rgba(31, 52, 70, 0.08);
+}
+
+.permission-hero h1 {
+  max-width: 14ch;
+  font: 600 38px/0.98 "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  letter-spacing: -0.04em;
+}
+
+.permission-intro {
+  max-width: 54ch;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
+.permission-panel {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(28, 39, 49, 0.1);
+  background: rgba(255, 255, 255, 0.68);
+}
+
+.permission-panel-copy {
+  display: grid;
+  gap: 4px;
+}
+
+.permission-panel-copy h2 {
+  font: 600 19px/1.08 "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  letter-spacing: -0.02em;
+}
+
+.permission-panel-copy p {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.permission-steps {
+  list-style: none;
+  counter-reset: mic-step;
+  display: grid;
+  gap: 10px;
+}
+
+.permission-steps li {
+  position: relative;
+  padding: 12px 14px 12px 50px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(28, 39, 49, 0.08);
+  background: rgba(21, 32, 42, 0.04);
+  color: var(--text-secondary);
+}
+
+.permission-steps li::before {
+  counter-increment: mic-step;
+  content: counter(mic-step);
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  transform: translateY(-50%);
+}
+
+.permission-steps strong {
+  color: var(--text);
+}
+
+.permission-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.control-primary,
+.control-tertiary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  min-width: 0;
+  padding: 0 16px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+  transition:
+    transform 0.16s ease,
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    opacity 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.control-primary:hover,
+.control-tertiary:hover {
+  transform: translateY(-1px);
+}
+
+.control-primary {
+  border: 0;
+  background: linear-gradient(180deg, #25394c, #152431);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(21, 36, 49, 0.16);
+}
+
+.control-tertiary {
+  border: 1px solid rgba(21, 32, 42, 0.12);
+  background: rgba(21, 32, 42, 0.06);
+  color: var(--text);
+}
+
+.control-primary:disabled,
+.control-tertiary:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.permission-tip {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.permission-status {
+  min-height: 20px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.permission-status[data-kind="working"] {
+  color: var(--warning);
+}
+
+.permission-status[data-kind="success"] {
+  color: var(--success);
+}
+
+.permission-status[data-kind="error"] {
+  color: var(--danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .permission-shell,
+  .permission-panel,
+  .permission-steps li {
+    border: 1px solid CanvasText;
+  }
+
+  .control-primary,
+  .control-tertiary {
+    border: 1px solid ButtonText;
+  }
+}
+
+@media (max-width: 640px) {
+  .permission-app {
+    padding: 16px;
+  }
+
+  .permission-shell {
+    padding: 22px 18px;
+  }
+
+  .permission-hero h1 {
+    max-width: none;
+    font-size: 32px;
+  }
+
+  .permission-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .control-primary,
+  .control-tertiary {
+    width: 100%;
+  }
+}

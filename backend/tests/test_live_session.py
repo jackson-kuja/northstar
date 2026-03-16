@@ -3,6 +3,8 @@
 import asyncio
 from types import SimpleNamespace
 
+from google.genai import types
+
 from app.live_session import LiveSession
 
 
@@ -85,6 +87,9 @@ class FakeClient:
         )
 
 
+TEST_CONNECT_CONFIG = types.LiveConnectConfig(response_modalities=["AUDIO"])
+
+
 def make_server_content_message(text):
     transcript = SimpleNamespace(text=text, finished=True)
     return SimpleNamespace(
@@ -102,6 +107,7 @@ def test_live_session_ignores_audio_after_connection_closes():
     live = LiveSession(
         client=None,
         tools=[],
+        connect_config=TEST_CONNECT_CONFIG,
         on_audio=_noop_audio,
         on_transcript=_noop_transcript,
         on_tool_call=_noop_tool_call,
@@ -120,6 +126,7 @@ def test_live_session_ignores_tool_response_after_connection_closes():
     live = LiveSession(
         client=None,
         tools=[],
+        connect_config=TEST_CONNECT_CONFIG,
         on_audio=_noop_audio,
         on_transcript=_noop_transcript,
         on_tool_call=_noop_tool_call,
@@ -149,6 +156,7 @@ def test_live_session_processes_multiple_turns_before_stopping():
     live = LiveSession(
         client=FakeClient(fake_session),
         tools=[],
+        connect_config=TEST_CONNECT_CONFIG,
         on_audio=_noop_audio,
         on_transcript=on_transcript,
         on_tool_call=_noop_tool_call,
@@ -168,6 +176,7 @@ def test_live_session_sends_text_as_completed_client_turn():
     live = LiveSession(
         client=None,
         tools=[],
+        connect_config=TEST_CONNECT_CONFIG,
         on_audio=_noop_audio,
         on_transcript=_noop_transcript,
         on_tool_call=_noop_tool_call,

@@ -66,12 +66,14 @@ class LiveSession:
         self,
         client: genai.Client,
         tools: list[types.Tool],
+        connect_config: types.LiveConnectConfig,
         on_audio: AudioCallback,
         on_transcript: TranscriptCallback,
         on_tool_call: ToolCallback,
     ):
         self.client = client
         self.tools = tools
+        self.connect_config = connect_config
         self.on_audio = on_audio
         self.on_transcript = on_transcript
         self.on_tool_call = on_tool_call
@@ -104,26 +106,10 @@ class LiveSession:
 
     async def start(self):
         """Start the live session and process responses until stopped."""
-        config = types.LiveConnectConfig(
-            response_modalities=["AUDIO"],
-            system_instruction=LIVE_SYSTEM_INSTRUCTION,
-            tools=self.tools,
-            input_audio_transcription=types.AudioTranscriptionConfig(),
-            output_audio_transcription=types.AudioTranscriptionConfig(),
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
-            realtime_input_config=types.RealtimeInputConfig(
-                automatic_activity_detection=types.AutomaticActivityDetection(
-                    disabled=True,
-                ),
-                activity_handling=types.ActivityHandling.START_OF_ACTIVITY_INTERRUPTS,
-                turn_coverage=types.TurnCoverage.TURN_INCLUDES_ALL_INPUT,
-            ),
-        )
-
         try:
             async with self.client.aio.live.connect(
                 model=LIVE_MODEL,
-                config=config,
+                config=self.connect_config,
             ) as session:
                 self.session = session
                 self._running = True

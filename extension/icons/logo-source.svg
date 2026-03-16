@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="148" y1="120" x2="910" y2="934" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2B465B"/>
+      <stop offset="0.52" stop-color="#1D3345"/>
+      <stop offset="1" stop-color="#101B26"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(352 254) rotate(42) scale(488 426)">
+      <stop offset="0" stop-color="#84BCFF" stop-opacity="0.44"/>
+      <stop offset="1" stop-color="#84BCFF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="orb" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(466 380) rotate(56) scale(436)">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.32" stop-color="#DCE8F2"/>
+      <stop offset="0.66" stop-color="#6F879A"/>
+      <stop offset="1" stop-color="#182735"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 512) scale(326)">
+      <stop offset="0" stop-color="#5FA3FF" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#5FA3FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="starOuter" x1="512" y1="176" x2="512" y2="848" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="0.5" stop-color="#F1F7FF"/>
+      <stop offset="1" stop-color="#B7D4FF"/>
+    </linearGradient>
+    <linearGradient id="starInner" x1="512" y1="254" x2="512" y2="770" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A8CDFF"/>
+      <stop offset="1" stop-color="#4F8FF7"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="72" y="72" width="880" height="880" rx="236" fill="url(#bg)"/>
+  <rect x="72" y="72" width="880" height="880" rx="236" fill="url(#sheen)"/>
+  <rect x="82" y="82" width="860" height="860" rx="226" stroke="white" stroke-opacity="0.1" stroke-width="20"/>
+
+  <circle cx="512" cy="512" r="318" fill="url(#glow)"/>
+  <circle cx="512" cy="512" r="246" fill="url(#orb)"/>
+  <circle cx="512" cy="512" r="278" stroke="#8FC1FF" stroke-opacity="0.3" stroke-width="18"/>
+  <circle cx="512" cy="512" r="214" stroke="white" stroke-opacity="0.13" stroke-width="10"/>
+
+  <path d="M512 176L596 428L848 512L596 596L512 848L428 596L176 512L428 428Z" fill="url(#starOuter)"/>
+  <path d="M512 254L556 468L770 512L556 556L512 770L468 556L254 512L468 468Z" fill="url(#starInner)"/>
+
+  <circle cx="512" cy="512" r="68" fill="#152431"/>
+  <circle cx="512" cy="512" r="40" fill="#F8FBFF"/>
+  <circle cx="534" cy="490" r="12" fill="#A7CCFF"/>
+  <circle cx="512" cy="512" r="54" stroke="white" stroke-opacity="0.12" stroke-width="8"/>
+</svg>

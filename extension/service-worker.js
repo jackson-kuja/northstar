@@ -4,6 +4,12 @@
  * side panel, content script, and backend.
  */
 
+import {
+  loadLiveSettings,
+  normalizeLiveSettings,
+  saveLiveSettings,
+} from "./shared/live-settings.js";
+
 const BACKEND_URL = "ws://localhost:8080/ws";
 const activeConnections = {};
 
@@ -51,6 +57,26 @@ const messageHandlers = {
     const tabId = message.tabId;
     if (!tabId) return;
     await ensureBackendConnection(tabId, { forceReconnect: true });
+  },
+
+  get_live_settings: async (_message, _sender, sendResponse) => {
+    try {
+      const settings = await loadLiveSettings();
+      sendResponse?.({ ok: true, settings });
+    } catch (error) {
+      sendResponse?.({ ok: false, error: error?.message || "Failed to load Northstar settings." });
+    }
+  },
+
+  update_live_settings: async (message, _sender, sendResponse) => {
+    try {
+      const settings = await saveLiveSettings(message.data || {});
+      await broadcastLiveSettings(settings);
+      chrome.runtime.sendMessage({ type: "live_settings_updated", settings }).catch(() => {});
+      sendResponse?.({ ok: true, settings });
+    } catch (error) {
+      sendResponse?.({ ok: false, error: error?.message || "Failed to save Northstar settings." });
+    }
   },
 
   user_message: async (message) => {
@@ -198,6 +224,8 @@ function createBackendConnection(tabId, sessionId) {
           sessionId,
         });
 
+        const liveSettings = await loadLiveSettings();
+        connection.sendToBackend({ type: "live_settings", data: liveSettings });
         connection.sendToBackend({ type: "live_start" });
         await requestInitialContext(tabId);
       };
@@ -238,6 +266,16 @@ function createBackendConnection(tabId, sessionId) {
   };
 
   return connection;
+}
+
+async function broadcastLiveSettings(settings) {
+  const normalized = normalizeLiveSettings(settings);
+  for (const connection of Object.values(activeConnections)) {
+    connection.sendToBackend({
+      type: "live_settings",
+      data: normalized,
+    });
+  }
 }
 
 function handleBackendMessage(tabId, message) {
