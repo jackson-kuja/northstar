@@ -3,6 +3,7 @@ __pycache__/
 *.py[cod]
 *.egg-info/
 .venv/
+backend/.venv/
 venv/
 *.egg
 
@@ -28,6 +29,9 @@ build/
 
 # Logs
 *.log
+
+# Local runtime data
+backend/data/sessions/
 
 # Playwright artifacts
 .playwright-cli/
