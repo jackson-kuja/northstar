@@ -33,24 +33,22 @@ Rules:
 - Call browser_task at most once for a given goal until that call reaches a terminal status.
 - While a browser task is already underway, do not start another browser_task unless the user clearly says to stop, cancel, or switch tasks.
 - Treat uncertain background speech or partial chatter during an active task as conversation, not as a new browser command.
+- If a new user utterance is fragmentary, accidental, or not understandable enough to act on, do not guess and do not answer it. Wait silently for a clearer turn.
 - browser_task returns structured fields including status, summary, current_url, current_title, and sometimes retry_goal.
 - A browser_task progress update is not a request to call browser_task again.
-- Relay updates are authoritative progress from the running browser task. Speak them naturally in one short sentence and do not call browser_task in response.
-- While a browser task is running, do not poll browser_task for status. Wait for relayed progress or the final tool result.
+- Authoritative progress updates from the running browser task may arrive through browser_task results before the final result. Speak them naturally in one short sentence and do not call browser_task in response.
+- While a browser task is running, do not poll browser_task for status. Wait for progress updates or the final tool result.
 - If browser_task returns status=started, acknowledge briefly that work is underway and stay ready for more updates.
 - If browser_task returns status=in_progress, give the user a short spoken progress update and do not treat it as final.
 - If browser_task returns suppress_user_update=true, produce no speech at all, do not call browser_task again, and wait quietly for the next real user turn or later browser_task result.
 - If browser_task returns already_running=true for the same goal, that is an instruction to wait silently. Do not apologize, fill time, or restate that you are checking.
 - If browser_task returns status=retry, call browser_task once more with retry_goal if present, otherwise reuse the original goal. Do this before telling the user it failed.
 - If browser_task returns status=needs_input, ask the user the question in summary or user_question.
+- If browser_task returns continuation_available=true and the user says yes, continue, keep going, or approves continuing, call browser_task once more with retry_goal if present, otherwise reuse the original goal.
 - If browser_task returns status=failed, explain the blocker briefly and mention where the browser ended up if that helps.
 - If browser_task returns status=completed, explain what happened in plain language in one short response.
 - If browser_task returns status=cancelled, do not continue the old task unless the user asks again.
 - For any question about the current page, current tab, visible content, available actions, page state, or what just changed on the page, call browser_task unless the answer is already fully grounded by the most recent browser_task result.
-- If the user sends a message that starts with "[[NORTHSTAR_STATUS]]", treat everything after the tag as an internal backend status update.
-- Do not say the tag out loud.
-- Do not call tools in response to that status update.
-- Speak the status update naturally in one short sentence.
 """
 
 ToolCallback = Callable[
@@ -225,6 +223,25 @@ class LiveSession:
             self._mark_closed()
             return False
 
+    async def _send_client_content(self, *, turns, turn_complete: bool = True) -> bool:
+        if not self.session:
+            await self._ready.wait()
+        if not self.session:
+            return False
+        try:
+            await self.session.send_client_content(
+                turns=turns,
+                turn_complete=turn_complete,
+            )
+            return True
+        except Exception as exc:
+            if self._is_normal_close(exc):
+                logger.info("Live client content dropped because the connection is already closed.")
+            else:
+                logger.warning("Live client content failed: %s", exc, exc_info=True)
+            self._mark_closed()
+            return False
+
     async def send_audio(
         self,
         audio_data: bytes,
@@ -237,7 +254,13 @@ class LiveSession:
 
     async def send_text(self, text: str):
         """Send text input into the live session."""
-        return await self._send_realtime_input(text=text)
+        return await self._send_client_content(
+            turns=types.Content(
+                role="user",
+                parts=[types.Part(text=text)],
+            ),
+            turn_complete=True,
+        )
 
     async def send_image(self, image_b64: str):
         """Send the latest screenshot into the live session context."""

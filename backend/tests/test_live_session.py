@@ -14,6 +14,9 @@ class ClosedSession:
     async def send_realtime_input(self, **kwargs):
         raise ConnectionClosedOK()
 
+    async def send_client_content(self, **kwargs):
+        raise ConnectionClosedOK()
+
     async def send_tool_response(self, **kwargs):
         raise ConnectionClosedOK()
 
@@ -35,6 +38,7 @@ class FakeSession:
         self.turns = list(turns)
         self.receive_calls = 0
         self.closed = False
+        self.client_content_calls = []
 
     def receive(self):
         async def iterator():
@@ -48,6 +52,10 @@ class FakeSession:
         return iterator()
 
     async def send_realtime_input(self, **kwargs):
+        return None
+
+    async def send_client_content(self, **kwargs):
+        self.client_content_calls.append(kwargs)
         return None
 
     async def send_tool_response(self, **kwargs):
@@ -153,3 +161,28 @@ def test_live_session_processes_multiple_turns_before_stopping():
         ("assistant", "First turn", True),
         ("assistant", "Second turn", True),
     ]
+
+
+def test_live_session_sends_text_as_completed_client_turn():
+    fake_session = FakeSession([])
+    live = LiveSession(
+        client=None,
+        tools=[],
+        on_audio=_noop_audio,
+        on_transcript=_noop_transcript,
+        on_tool_call=_noop_tool_call,
+    )
+    live.session = fake_session
+    live._running = True
+    live._ready.set()
+
+    sent = asyncio.run(live.send_text("Describe this page"))
+
+    assert sent is True
+    assert len(fake_session.client_content_calls) == 1
+    call = fake_session.client_content_calls[0]
+    assert call["turn_complete"] is True
+    assert call["turns"].model_dump(exclude_none=True) == {
+        "parts": [{"text": "Describe this page"}],
+        "role": "user",
+    }

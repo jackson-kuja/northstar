@@ -20,7 +20,7 @@ logger = logging.getLogger("northstar.browser")
 BROWSER_AGENT_MODEL = os.getenv("BROWSER_AGENT_MODEL", "gemini-3-flash-preview")
 ORCHESTRATOR_MODEL = BROWSER_AGENT_MODEL
 COMPUTER_USE_MODEL = BROWSER_AGENT_MODEL
-MAX_ORCHESTRATOR_STEPS = int(os.getenv("BROWSER_ORCHESTRATOR_MAX_STEPS", "8"))
+MAX_ORCHESTRATOR_STEPS = int(os.getenv("BROWSER_ORCHESTRATOR_MAX_STEPS", "20"))
 ORCHESTRATOR_RESPONSE_TIMEOUT_SECONDS = float(
     os.getenv("BROWSER_ORCHESTRATOR_TIMEOUT_SECONDS", "45")
 )
@@ -652,12 +652,20 @@ class BrowserAgent:
             contents.append(response.candidates[0].content)
             contents.append(types.Content(role="user", parts=response_parts))
 
+        question = (
+            "I need a bit more time to keep working on this. "
+            "Say continue or tap Continue and I'll resume from the current page."
+        )
         result = self._build_task_result(
             goal=goal,
             session=session,
-            status="failed",
-            summary="Northstar ran out of planning steps before finishing the browser task.",
+            status="needs_input",
+            summary=question,
             mode="orchestrator",
+            recoverable=True,
+            retry_goal=goal,
+            user_question=question,
+            continuation_available=True,
         )
         await self._record_event(
             session,
@@ -1134,6 +1142,7 @@ class BrowserAgent:
         recoverable: bool = False,
         retry_goal: str | None = None,
         user_question: str | None = None,
+        continuation_available: bool = False,
     ) -> dict[str, Any]:
         page_state = session.get("page_state") or {}
         result = {
@@ -1150,6 +1159,8 @@ class BrowserAgent:
             result["retry_goal"] = retry_goal
         if user_question:
             result["user_question"] = user_question
+        if continuation_available:
+            result["continuation_available"] = True
         return result
 
     def _build_api_error_result(

@@ -18,6 +18,7 @@ from google import genai
 from google.genai import types
 
 from app.browser_agent import BrowserAgent
+from app.live_transcript import sanitize_live_transcript_text
 from app.live_session import LiveSession
 from app.session_recorder import (
     DEFAULT_RECORDINGS_ROOT,
@@ -70,7 +71,6 @@ BROWSER_PROGRESS_HEARTBEAT_MESSAGES = {
     "I'm still working through the page.",
     "Still here. I'm deciding the next browser action.",
 }
-INTERNAL_STATUS_UPDATE_TAG = "[[NORTHSTAR_STATUS]]"
 
 LIVE_TOOL_DECLARATIONS = [
     types.Tool(
@@ -513,7 +513,7 @@ async def ensure_live_session(session: dict[str, Any], force: bool = False):
         )
 
     async def on_transcript(role: str, text: str, finished: bool):
-        text = str(text or "")
+        text = sanitize_live_transcript_text(text)
         if not text and not finished:
             return
         if role == "user" and text:
@@ -588,6 +588,7 @@ async def ensure_live_session(session: dict[str, Any], force: bool = False):
             and recent_result
             and normalized_goal
             and normalized_goal == recent_goal
+            and not recent_result.get("recoverable")
             and (time.monotonic() - recent_result_at) <= RECENT_BROWSER_RESULT_TTL_SECONDS
         ):
             response = types.FunctionResponse(
@@ -788,43 +789,6 @@ async def close_active_assistant_transcript(
     )
 
 
-async def relay_update_via_live(
-    session: dict[str, Any],
-    text: str,
-    *,
-    reason: str,
-    since_timestamp: float | None = None,
-) -> bool:
-    text = str(text or "").strip()
-    if not text:
-        return False
-    if since_timestamp is not None and _should_skip_spoken_update(
-        session,
-        since_timestamp=since_timestamp,
-    ):
-        return False
-
-    live_session = session.get("live_session")
-    if not live_session or not live_session.is_active():
-        await ensure_live_session(session, force=True)
-        live_session = session.get("live_session")
-        if live_session and not live_session.is_active():
-            await live_session.wait_until_ready()
-
-    if not live_session or not live_session.is_active():
-        return False
-
-    logger.info("Relaying browser-task update back through Gemini Live.")
-    await record_session_event(
-        session,
-        source="backend",
-        event_type="live_relay_message",
-        payload={"text": text},
-    )
-    await close_active_assistant_transcript(session, reason=reason)
-    return await live_session.send_text(f"{INTERNAL_STATUS_UPDATE_TAG} {text}")
-
-
 async def run_browser_task_job(
     session: dict[str, Any],
     call_id: str | None,
@@ -875,6 +839,27 @@ async def run_browser_task_job(
             }
         )
         live_session = session.get("live_session")
+        should_speak_progress = (
+            live_session is not None
+            and live_session.is_active()
+            and call_id is not None
+            and _should_relay_browser_progress(session, message)
+            and not _should_skip_spoken_update(
+                session,
+                since_timestamp=progress_generated_at,
+            )
+        )
+        if should_speak_progress:
+            await record_session_event(
+                session,
+                source="backend",
+                event_type="browser_progress_spoken_requested",
+                payload={"message": message},
+            )
+            await close_active_assistant_transcript(
+                session,
+                reason="browser_progress",
+            )
         if live_session and live_session.is_active() and call_id:
             tool_response = types.FunctionResponse(
                 id=call_id,
@@ -885,7 +870,11 @@ async def run_browser_task_job(
                     "goal": goal,
                 },
                 will_continue=True,
-                scheduling=types.FunctionResponseScheduling.SILENT,
+                scheduling=(
+                    types.FunctionResponseScheduling.WHEN_IDLE
+                    if should_speak_progress
+                    else types.FunctionResponseScheduling.SILENT
+                ),
             )
             await record_session_event(
                 session,
@@ -894,16 +883,9 @@ async def run_browser_task_job(
                 payload=_summarize_function_response(tool_response),
             )
             await live_session.send_tool_response(tool_response)
-        if _should_relay_browser_progress(session, message):
-            relay_sent = await relay_update_via_live(
-                session,
-                message,
-                reason="browser_progress",
-                since_timestamp=progress_generated_at,
-            )
-            if relay_sent:
-                session["last_relayed_browser_progress_message"] = message
-                session["last_relayed_browser_progress_at"] = time.monotonic()
+        if should_speak_progress:
+            session["last_relayed_browser_progress_message"] = message
+            session["last_relayed_browser_progress_at"] = time.monotonic()
 
     try:
         result = await browser_agent.run_task(
@@ -976,6 +958,11 @@ async def run_browser_task_job(
             "phase": "browser_task",
             "status": result.get("status", ""),
             "message": result.get("summary", ""),
+            "goal": result.get("goal", ""),
+            "retry_goal": result.get("retry_goal", ""),
+            "recoverable": bool(result.get("recoverable")),
+            "continuation_available": bool(result.get("continuation_available")),
+            "user_question": result.get("user_question", ""),
         }
     )
     await record_session_event(
@@ -1012,17 +999,6 @@ async def run_browser_task_job(
     if fallback_text:
         await asyncio.sleep(1.2)
         if session.get("last_assistant_output_at", 0.0) < tool_response_sent_at:
-            relay_sent = await relay_update_via_live(
-                session,
-                fallback_text,
-                reason="browser_result_fallback",
-                since_timestamp=tool_response_sent_at,
-            )
-            if relay_sent:
-                relay_started_at = time.monotonic()
-                await asyncio.sleep(1.2)
-                if session.get("last_assistant_output_at", 0.0) >= relay_started_at:
-                    return
             await send_json(
                 session,
                 {

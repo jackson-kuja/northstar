@@ -27,15 +27,28 @@ let speechLeadInChunks = [];
 let persona = null;
 let personaReady = false;
 let personaInputs = {};
+let personaWaveformFrame = 0;
+let personaWaveformLastFrameAt = 0;
+let personaMicLevel = 0;
+let personaSpeakerLevel = 0;
+let personaWaveformLevel = 0;
 let previouslyFocusedElement = null;
 
 const SPEECH_THRESHOLD = 0.014;
 const SPEECH_SILENCE_HANG_MS = 650;
 const SPEECH_LEAD_IN_CHUNKS = 3;
+const PERSONA_WAVE_MAX_SCALE_DELTA = 0.08;
+const PERSONA_WAVE_MAX_LIFT_PX = 3;
+const PERSONA_WAVE_INPUT_FLOOR = 0.008;
+const PERSONA_WAVE_INPUT_CEIL = 0.05;
+const PERSONA_WAVE_OUTPUT_FLOOR = 0.01;
+const PERSONA_WAVE_OUTPUT_CEIL = 0.09;
 const MAX_CONVERSATION_ITEMS = 6;
 const hasChromeApis = Boolean(globalThis.chrome?.runtime?.onMessage && globalThis.chrome?.tabs);
 const PERSONA_RIVE_SRC = "../assets/rive/obsidian-2.0.riv";
 const PERSONA_STATE_MACHINE = "default";
+const NO_WORD_SEPARATOR_SCRIPT_PATTERN =
+  /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Thai}\p{Script=Lao}\p{Script=Khmer}\p{Script=Myanmar}]/u;
 
 const transcriptBuffers = { user: "", assistant: "" };
 const activeTranscriptNodes = { user: null, assistant: null };
@@ -57,6 +70,9 @@ const sendButton = document.getElementById("sendButton");
 const quickActions = document.getElementById("quickActions");
 const statusBar = document.getElementById("statusBar");
 const statusText = document.getElementById("statusText");
+const taskApprovalBar = document.getElementById("taskApprovalBar");
+const taskApprovalText = document.getElementById("taskApprovalText");
+const continueTaskButton = document.getElementById("continueTaskButton");
 const diagnosisPanel = document.getElementById("diagnosisPanel");
 const diagnosisContent = document.getElementById("diagnosisContent");
 const closeDiagnosis = document.getElementById("closeDiagnosis");
@@ -90,6 +106,7 @@ async function init() {
       disconnectFromBackend(previousTabId);
     }
     currentTabId = activeInfo.tabId;
+    hideTaskApprovalBar();
     clearStreamingMessages();
     try {
       const tab = await chrome.tabs.get(activeInfo.tabId);
@@ -190,6 +207,102 @@ function resizePersona() {
   persona.resizeDrawingSurfaceToCanvas();
 }
 
+function normalizePersonaWaveformRms(channel, rms) {
+  const floor = channel === "speaker" ? PERSONA_WAVE_OUTPUT_FLOOR : PERSONA_WAVE_INPUT_FLOOR;
+  const ceil = channel === "speaker" ? PERSONA_WAVE_OUTPUT_CEIL : PERSONA_WAVE_INPUT_CEIL;
+  const normalized = (rms - floor) / (ceil - floor);
+  return Math.max(0, Math.min(1, normalized));
+}
+
+function applyPersonaWaveform(level) {
+  if (!voiceOrbShell) {
+    return;
+  }
+
+  const clamped = Math.max(0, Math.min(1, level));
+  const scale = 1 + clamped * PERSONA_WAVE_MAX_SCALE_DELTA;
+  const lift = clamped * -PERSONA_WAVE_MAX_LIFT_PX;
+  const glow = 0.16 + clamped * 0.84;
+  voiceOrbShell.style.setProperty("--persona-wave-scale", scale.toFixed(4));
+  voiceOrbShell.style.setProperty("--persona-wave-lift", `${lift.toFixed(2)}px`);
+  voiceOrbShell.style.setProperty("--persona-wave-glow", glow.toFixed(4));
+}
+
+function stopPersonaWaveformLoop() {
+  if (personaWaveformFrame) {
+    cancelAnimationFrame(personaWaveformFrame);
+    personaWaveformFrame = 0;
+  }
+  personaWaveformLastFrameAt = 0;
+}
+
+function resetPersonaWaveform() {
+  personaMicLevel = 0;
+  personaSpeakerLevel = 0;
+  personaWaveformLevel = 0;
+  stopPersonaWaveformLoop();
+  applyPersonaWaveform(0);
+}
+
+function decayPersonaWaveformLevel(level, deltaSeconds, ratePerSecond) {
+  return Math.max(0, level - deltaSeconds * ratePerSecond);
+}
+
+function stepPersonaWaveform(timestamp) {
+  if (!personaWaveformLastFrameAt) {
+    personaWaveformLastFrameAt = timestamp;
+  }
+
+  const deltaSeconds = Math.min(0.12, Math.max(0.016, (timestamp - personaWaveformLastFrameAt) / 1000));
+  personaWaveformLastFrameAt = timestamp;
+
+  personaMicLevel = decayPersonaWaveformLevel(
+    personaMicLevel,
+    deltaSeconds,
+    speechActivityActive || isListening ? 2.6 : 4.5
+  );
+  personaSpeakerLevel = decayPersonaWaveformLevel(
+    personaSpeakerLevel,
+    deltaSeconds,
+    isAssistantSpeaking ? 2.2 : 4.2
+  );
+
+  const targetLevel = Math.max(personaMicLevel, personaSpeakerLevel);
+  const smoothing = Math.min(1, deltaSeconds * 18);
+  personaWaveformLevel += (targetLevel - personaWaveformLevel) * smoothing;
+  applyPersonaWaveform(personaWaveformLevel);
+
+  if (
+    targetLevel > 0.002 ||
+    personaWaveformLevel > 0.002 ||
+    speechActivityActive ||
+    isAssistantSpeaking
+  ) {
+    personaWaveformFrame = requestAnimationFrame(stepPersonaWaveform);
+    return;
+  }
+
+  resetPersonaWaveform();
+}
+
+function ensurePersonaWaveformLoop() {
+  if (personaWaveformFrame) {
+    return;
+  }
+  personaWaveformLastFrameAt = 0;
+  personaWaveformFrame = requestAnimationFrame(stepPersonaWaveform);
+}
+
+function updatePersonaWaveform(channel, rms) {
+  const normalized = normalizePersonaWaveformRms(channel, rms);
+  if (channel === "speaker") {
+    personaSpeakerLevel = Math.max(personaSpeakerLevel, normalized);
+  } else {
+    personaMicLevel = Math.max(personaMicLevel, normalized);
+  }
+  ensurePersonaWaveformLoop();
+}
+
 function syncPersonaState() {
   if (!personaReady) {
     return;
@@ -235,6 +348,7 @@ function cleanupPersona() {
   persona = null;
   personaReady = false;
   personaInputs = {};
+  resetPersonaWaveform();
   voiceOrbShell?.classList.remove("has-persona");
 }
 
@@ -285,6 +399,7 @@ async function sendMessage(text) {
   ensurePlaybackContext().catch(() => {});
   await syncToActiveTabContext();
   clearAssistantSpeaking();
+  hideTaskApprovalBar();
   clearTranscriptRole("user");
   clearTranscriptRole("assistant");
   setVoiceHeroVisible(false);
@@ -322,7 +437,7 @@ textInput.addEventListener("keydown", (event) => {
   }
 });
 
-document.querySelectorAll(".quick-action").forEach((button) => {
+document.querySelectorAll(".quick-action[data-command]").forEach((button) => {
   button.addEventListener("click", () => {
     sendMessage(button.dataset.command).catch((error) => {
       console.error("Quick action failed:", error);
@@ -348,6 +463,15 @@ endVoiceButton.addEventListener("click", async () => {
 showKeyboardButton.addEventListener("click", () => {
   setKeyboardVisible(!keyboardVisible);
   updateVoiceHeroPrompt();
+});
+
+continueTaskButton?.addEventListener("click", () => {
+  sendMessage("Continue with the current browser task.").catch((error) => {
+    console.error("Continue task failed:", error);
+    handleVoiceCaptureFailure(error?.message || "Failed to continue the browser task.", {
+      reason: "context_failed",
+    });
+  });
 });
 
 async function startListening() {
@@ -444,6 +568,10 @@ async function stopListening({
     captureContext = null;
   }
 
+  if (!voiceSessionActive && !awaitingResponse) {
+    resetPersonaWaveform();
+  }
+
   if (!hasConversationMessages()) {
     setVoiceHeroVisible(true);
   }
@@ -468,6 +596,7 @@ async function playAudioChunk(base64, mimeType = "audio/pcm;rate=24000") {
     const url = URL.createObjectURL(blob);
     const audio = new Audio(url);
     audio.onended = () => URL.revokeObjectURL(url);
+    updatePersonaWaveform("speaker", PERSONA_WAVE_OUTPUT_FLOOR + (PERSONA_WAVE_OUTPUT_CEIL - PERSONA_WAVE_OUTPUT_FLOOR) * 0.35);
     markAssistantSpeaking(1400);
     await audio.play();
     return;
@@ -475,6 +604,7 @@ async function playAudioChunk(base64, mimeType = "audio/pcm;rate=24000") {
 
   const sampleRate = parsePcmRate(mimeType) || 24000;
   const pcm = new Int16Array(base64ToArrayBuffer(base64));
+  updatePersonaWaveform("speaker", computeRmsLevel(pcm));
   const floatData = new Float32Array(pcm.length);
   for (let i = 0; i < pcm.length; i += 1) {
     floatData[i] = pcm[i] / 32768;
@@ -510,7 +640,7 @@ function updateTranscript(role, text, finished) {
   }
 
   const current = transcriptBuffers[transcriptRole];
-  const nextText = transcriptText.startsWith(current) ? transcriptText : current + transcriptText;
+  const nextText = mergeTranscriptText(current, transcriptText);
   transcriptBuffers[transcriptRole] = nextText;
 
   let node = activeTranscriptNodes[transcriptRole];
@@ -534,6 +664,94 @@ function updateTranscript(role, text, finished) {
   if (finished) {
     finalizeTranscriptRole(transcriptRole);
   }
+}
+
+function mergeTranscriptText(current, incoming) {
+  if (!incoming) {
+    return current;
+  }
+  if (!current) {
+    return incoming;
+  }
+  if (incoming.startsWith(current)) {
+    return incoming;
+  }
+
+  const overlapLength = findTranscriptOverlap(current, incoming);
+  const nextChunk = overlapLength > 0 ? incoming.slice(overlapLength) : incoming;
+  if (!nextChunk) {
+    return current;
+  }
+
+  if (shouldConcatenateTranscriptWordFragment(current, nextChunk)) {
+    return `${current}${nextChunk}`;
+  }
+
+  if (needsTranscriptSeparator(current, nextChunk)) {
+    return `${current} ${nextChunk.replace(/^\s+/, "")}`;
+  }
+  return `${current}${nextChunk}`;
+}
+
+function findTranscriptOverlap(current, incoming) {
+  const maxLength = Math.min(current.length, incoming.length);
+  for (let size = maxLength; size > 0; size -= 1) {
+    if (current.slice(-size) === incoming.slice(0, size)) {
+      return size;
+    }
+  }
+  return 0;
+}
+
+function shouldConcatenateTranscriptWordFragment(current, nextChunk) {
+  if (!current || !nextChunk) {
+    return false;
+  }
+  if (/\s$/.test(current) || /^\s/.test(nextChunk)) {
+    return false;
+  }
+  if (/^[,.;:!?%)\]}]/.test(nextChunk) || /^['’]/.test(nextChunk)) {
+    return false;
+  }
+  if (/[(\[{/"“‘-]$/.test(current)) {
+    return false;
+  }
+
+  const currentBoundary = current.at(-1) || "";
+  const nextBoundary = nextChunk[0] || "";
+  return /[\p{L}\p{N}]$/u.test(currentBoundary) && /^[\p{L}\p{N}]/u.test(nextBoundary);
+}
+
+function needsTranscriptSeparator(current, nextChunk) {
+  if (!current || !nextChunk) {
+    return false;
+  }
+  if (/\s$/.test(current) || /^\s/.test(nextChunk)) {
+    return false;
+  }
+  if (/^[,.;:!?%)\]}]/.test(nextChunk) || /^['’]/.test(nextChunk)) {
+    return false;
+  }
+  if (/[(\[{/"“‘-]$/.test(current)) {
+    return false;
+  }
+
+  const currentBoundary = current.at(-1) || "";
+  const nextBoundary = nextChunk[0] || "";
+  if (
+    NO_WORD_SEPARATOR_SCRIPT_PATTERN.test(currentBoundary) ||
+    NO_WORD_SEPARATOR_SCRIPT_PATTERN.test(nextBoundary)
+  ) {
+    return false;
+  }
+
+  const currentEndsWord = /[\p{L}\p{N}]$/u.test(currentBoundary);
+  const nextStartsWord = /^[\p{L}\p{N}]/u.test(nextBoundary);
+  if (currentEndsWord && nextStartsWord) {
+    return true;
+  }
+
+  return /[,.!?;:]$/.test(current) && nextStartsWord;
 }
 
 function clearStreamingMessages() {
@@ -623,6 +841,7 @@ function updateConnectionStatus(status) {
     return;
   }
 
+  hideTaskApprovalBar();
   updateStatusState("error", "Live disconnected");
   if (!hasConversationMessages()) {
     setVoiceHeroVisible(true);
@@ -649,7 +868,12 @@ function updateStatus(data = {}) {
 
 function updateStatusState(state, text) {
   baseUiState = normalizeUiState(state);
-  statusText.textContent = text;
+  if (statusText) {
+    statusText.textContent = text;
+  }
+  if (voiceHeroStatus && voiceHero.classList.contains("compact")) {
+    voiceHeroStatus.textContent = text;
+  }
   renderUiState();
   announce(text, state === "error" ? "assertive" : "polite");
 }
@@ -673,8 +897,11 @@ function restoreLiveStatusState() {
 function handleBrowserTaskStatus(data = {}) {
   const taskStatus = String(data.status || "").trim();
   const message = String(data.message || "").trim();
+  const userQuestion = String(data.user_question || "").trim();
+  const continuationAvailable = Boolean(data.continuation_available);
 
   if (!taskStatus) {
+    hideTaskApprovalBar();
     if (message) {
       updateStatusState("acting", message);
     }
@@ -682,13 +909,24 @@ function handleBrowserTaskStatus(data = {}) {
   }
 
   if (taskStatus === "completed" || taskStatus === "failed" || taskStatus === "cancelled") {
+    hideTaskApprovalBar();
     restoreLiveStatusState();
     return;
   }
 
   if (taskStatus === "needs_input") {
+    if (continuationAvailable) {
+      showTaskApprovalBar(userQuestion || message || "Northstar needs your approval to continue.");
+    } else {
+      hideTaskApprovalBar();
+    }
     if (liveConnectionStatus === "connected") {
-      updateStatusState("listening", "Listening for your answer");
+      updateStatusState(
+        "listening",
+        continuationAvailable
+          ? "Waiting for your approval to continue"
+          : "Listening for your answer"
+      );
     } else {
       restoreLiveStatusState();
     }
@@ -696,15 +934,32 @@ function handleBrowserTaskStatus(data = {}) {
   }
 
   if (taskStatus === "started" || taskStatus === "in_progress" || taskStatus === "retry") {
+    hideTaskApprovalBar();
     updateStatusState("acting", message || "Working on it...");
     return;
   }
 
+  hideTaskApprovalBar();
   if (message) {
     updateStatusState("acting", message);
   } else {
     restoreLiveStatusState();
   }
+}
+
+function showTaskApprovalBar(text) {
+  if (!taskApprovalBar || !taskApprovalText) {
+    return;
+  }
+  taskApprovalText.textContent = text || "Northstar needs your approval to continue.";
+  taskApprovalBar.hidden = false;
+}
+
+function hideTaskApprovalBar() {
+  if (!taskApprovalBar) {
+    return;
+  }
+  taskApprovalBar.hidden = true;
 }
 
 function refreshConversationMode() {
@@ -1223,6 +1478,14 @@ function handleMicrophoneChunk(pcmBytes) {
   const rms = computeRmsLevel(pcmBytes);
   const now = performance.now();
   const base64 = arrayBufferToBase64(pcmBytes.buffer);
+  updatePersonaWaveform("input", rms);
+
+  const inputRing = document.getElementById("inputRing");
+  if (inputRing && !voiceOrbShell?.classList.contains("has-persona")) {
+    const scale = 1 + Math.min(rms * 40, 0.4); // max scale 1.4
+    inputRing.style.transform = `scale(${scale})`;
+    inputRing.style.opacity = Math.min(0.2 + rms * 10, 1).toFixed(2); // between 0.2 and 1
+  }
 
   if (rms >= SPEECH_THRESHOLD) {
     speechLastDetectedAt = now;
@@ -1306,9 +1569,13 @@ function normalizeUiState(state) {
 function renderUiState() {
   const visibleState = isAssistantSpeaking ? "speaking" : baseUiState;
   appShell.dataset.uiState = visibleState;
-  statusBar.dataset.state = visibleState;
+  if (statusBar) {
+    statusBar.dataset.state = visibleState;
+  }
   voiceHero.dataset.state = visibleState;
-  heroStateBadge.textContent = getUiStateLabel(visibleState);
+  if (heroStateBadge) {
+    heroStateBadge.textContent = getUiStateLabel(visibleState);
+  }
   syncPersonaState();
 }
 

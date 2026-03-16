@@ -12,49 +12,36 @@
   <div id="app" data-ui-state="idle">
     <p id="panelAnnouncements" class="sr-only" role="status" aria-live="polite" aria-atomic="true"></p>
 
-    <header class="topbar">
-      <div class="brand-lockup">
-        <div class="brand-mark" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-          </svg>
-        </div>
-        <div class="brand-copy">
-          <span class="brand-name">Northstar</span>
-          <span class="brand-subtitle">Live browser control</span>
-        </div>
-      </div>
-
-      <div
-        id="connectionStatus"
-        class="connection-status"
-        role="status"
-        aria-live="polite"
-        aria-atomic="true"
-        aria-label="Connection status: disconnected"
-      >
-        <span class="status-dot"></span>
-        <span class="status-text">Disconnected</span>
-      </div>
-    </header>
-
     <main id="mainContent" class="main-shell">
       <section
         id="voiceHero"
         class="voice-hero"
         data-tone="idle"
         aria-labelledby="voiceHeroHeading"
-        aria-describedby="panelIntro voiceHeroStatus"
+        aria-describedby="voiceHeroStatus"
       >
         <div class="hero-shell">
           <div class="hero-meta">
-            <span class="scope-pill">Current tab</span>
-            <span id="scopeTitle" class="scope-title">Waiting for the active page</span>
+            <div
+              id="connectionStatus"
+              class="connection-status"
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              aria-label="Connection status: disconnected"
+            >
+              <span class="status-dot"></span>
+              <span class="status-text">Disconnected</span>
+            </div>
+            <div class="scope-info">
+              <span id="scopeTitle" class="scope-title">Waiting for the active page</span>
+            </div>
           </div>
 
           <div class="hero-stage">
             <div class="voice-orb-shell" aria-hidden="true">
               <canvas id="personaCanvas" class="persona-canvas" width="144" height="144"></canvas>
+              <div id="inputRing" class="input-ring"></div>
               <div id="voiceOrbFallback" class="voice-orb">
                 <div class="voice-orb-core"></div>
                 <div class="voice-orb-ring ring-one"></div>
@@ -64,13 +51,8 @@
             </div>
 
             <div class="hero-copy">
-              <div id="statusBar" class="stage-status" data-state="idle" aria-hidden="true">
-                <span id="heroStateBadge" class="hero-state-badge">Ready</span>
-                <span id="statusText" class="status-detail">Ready</span>
-              </div>
-              <h1 id="voiceHeroHeading">Control the page in front of you.</h1>
-              <p id="panelIntro" class="hero-intro">Use voice or keyboard to inspect the current page, move through it, and ask Northstar to act on your behalf.</p>
-              <p id="voiceHeroStatus">Start voice to ask what is here, move through the page, or tell Northstar what to do.</p>
+              <h1 id="voiceHeroHeading">Ask Northstar to navigate or take action.</h1>
+              <p id="voiceHeroStatus">Start voice to talk hands-free.</p>
             </div>
           </div>
         </div>
@@ -132,6 +114,21 @@
             aria-expanded="false"
           >
             Keyboard
+          </button>
+        </div>
+
+        <div
+          id="taskApprovalBar"
+          class="task-approval-bar"
+          role="group"
+          aria-label="Task approval"
+          hidden
+        >
+          <span id="taskApprovalText" class="task-approval-text">
+            Northstar needs your approval to continue.
+          </span>
+          <button id="continueTaskButton" class="quick-action task-approval-button" type="button">
+            Continue
           </button>
         </div>
 
