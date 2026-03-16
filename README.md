@@ -113,6 +113,54 @@ The extension's default backend target is local development:
 ws://localhost:8080/ws
 ```
 
+## Reproducible Testing
+
+Judges can verify Northstar in two ways: a fast automated backend test pass and a short end-to-end browser demo.
+
+### 1. Automated backend tests
+
+After completing the backend setup above:
+
+```bash
+cd backend
+source .venv/bin/activate
+pytest tests -q
+```
+
+Expected result: all backend tests pass. At submission time this returned `33 passed`.
+
+### 2. End-to-end local smoke test
+
+With the backend running on `http://localhost:8080`, the demo site running on `http://localhost:8765`, and the extension loaded:
+
+1. Open `http://localhost:8765`.
+2. Open the Northstar side panel from the Chrome toolbar.
+3. If microphone permission is inconvenient in the judge environment, use the keyboard toggle and type the same commands instead of speaking them.
+4. Run these commands in order:
+
+- `Describe this page`
+- `Filter to show only items under 50 dollars and sort by rating`
+- `Add the top-rated item to cart`
+- `Go to checkout`
+- `Why was that hard for a screen reader?`
+
+Expected results:
+
+- Northstar describes the TechMart demo page and calls out accessibility barriers.
+- Northstar applies the price filter and sort change on the broken UI.
+- Northstar adds an item to the cart and opens checkout.
+- Northstar explains why the flow is difficult on this page and surfaces the barriers it found.
+
+### 3. Basic backend health check
+
+If you only want to verify that the backend is up before running the full demo:
+
+```bash
+curl http://localhost:8080/health
+```
+
+Expected result: a JSON response with `"status": "ok"`.
+
 ## Cloud deployment
 
 The repository includes a Cloud Build pipeline at `infra/cloudbuild.yaml` that builds the backend image, pushes it to Artifact Registry, and deploys it to Cloud Run.
