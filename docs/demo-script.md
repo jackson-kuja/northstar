@@ -97,7 +97,7 @@ A screen reader user would be unable to identify most interactive controls, coul
 **Screen:** Architecture diagram
 
 **Narration:**
-"Northstar runs as a Chrome extension with a persistent side panel. Voice input flows through the Gemini 2.5 Flash Native Audio Live API for real-time conversation. Page understanding uses Gemini 2.5 Flash to interpret both the accessibility tree and screenshots. Complex recovery uses Gemini 2.5 Pro. Every action goes through a four-tier confidence ladder — semantic first, visual fallback only when needed — and every action is verified after execution. Sessions are stored in Firestore, the backend runs on Cloud Run, and the whole pipeline is deployed via Cloud Build."
+"Northstar runs as a Chrome extension with a persistent side panel. Voice input flows through the Gemini 2.5 Flash Native Audio Live API for real-time conversation. The browser task loop uses Gemini 3 Flash with DOM-first actions, visual fallback when the page is broken, and verification after each step. Page context comes from the accessibility tree, the page map, and screenshots. Sessions can persist to Firestore, the backend runs on Cloud Run, and the deployment pipeline runs through Cloud Build."
 
 ## 3:45–4:00 — Closing
 

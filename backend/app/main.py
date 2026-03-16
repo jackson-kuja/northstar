@@ -1,4 +1,4 @@
-"""Northstar backend for Gemini Live + Pro-orchestrated browser control."""
+"""Northstar backend for Gemini Live + browser-orchestrated control."""
 
 from __future__ import annotations
 

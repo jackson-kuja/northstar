@@ -7,144 +7,98 @@
       <stop offset="0%" stop-color="#4f8ff7"/>
       <stop offset="100%" stop-color="#3b6fd4"/>
     </linearGradient>
-    <linearGradient id="dark" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#1a1d27"/>
-      <stop offset="100%" stop-color="#232736"/>
-    </linearGradient>
     <linearGradient id="green" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#34a853"/>
       <stop offset="100%" stop-color="#2d9148"/>
     </linearGradient>
   </defs>
 
-  <!-- Background -->
   <rect width="900" height="520" rx="12" fill="#0f1117"/>
 
-  <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" fill="#e4e6ef" font-size="18" font-weight="700">Northstar - System Architecture</text>
-  <text x="450" y="52" text-anchor="middle" fill="#8b8fa7" font-size="11">Accessibility Autopilot for the Broken Web</text>
+  <text x="450" y="34" text-anchor="middle" fill="#e4e6ef" font-size="19" font-weight="700">Northstar - System Architecture</text>
+  <text x="450" y="54" text-anchor="middle" fill="#8b8fa7" font-size="11">Current runtime architecture from the codebase</text>
 
-  <!-- Chrome Extension (Left) -->
-  <rect x="30" y="75" width="260" height="420" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="160" y="100" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Chrome Extension (MV3)</text>
+  <!-- Chrome Extension -->
+  <rect x="30" y="78" width="260" height="415" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
+  <text x="160" y="103" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Chrome Extension (MV3)</text>
 
-  <!-- Side Panel -->
-  <rect x="50" y="115" width="220" height="60" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="140" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Side Panel UI</text>
-  <text x="160" y="156" text-anchor="middle" fill="#8b8fa7" font-size="10">Voice I/O | Transcript | Status</text>
+  <rect x="50" y="120" width="220" height="58" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="160" y="145" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Side Panel UI</text>
+  <text x="160" y="161" text-anchor="middle" fill="#8b8fa7" font-size="10">Voice I/O | Transcript | Status</text>
 
-  <!-- Service Worker -->
-  <rect x="50" y="185" width="220" height="60" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="210" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Service Worker</text>
-  <text x="160" y="226" text-anchor="middle" fill="#8b8fa7" font-size="10">WebSocket | Message Router</text>
+  <rect x="50" y="188" width="220" height="58" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="160" y="213" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Service Worker</text>
+  <text x="160" y="229" text-anchor="middle" fill="#8b8fa7" font-size="10">WebSocket | Message Router</text>
 
-  <!-- Content Script -->
-  <rect x="50" y="255" width="220" height="80" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="278" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Content Script</text>
-  <text x="160" y="294" text-anchor="middle" fill="#8b8fa7" font-size="10">Page Map Extraction</text>
-  <text x="160" y="308" text-anchor="middle" fill="#8b8fa7" font-size="10">Action Execution | Overlays</text>
-  <text x="160" y="322" text-anchor="middle" fill="#8b8fa7" font-size="10">A11y Issue Detection</text>
+  <rect x="50" y="256" width="220" height="92" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="160" y="280" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Content Script</text>
+  <text x="160" y="297" text-anchor="middle" fill="#8b8fa7" font-size="10">Page map extraction</text>
+  <text x="160" y="314" text-anchor="middle" fill="#8b8fa7" font-size="10">DOM actions | Overlays</text>
+  <text x="160" y="331" text-anchor="middle" fill="#8b8fa7" font-size="10">A11y issue detection</text>
 
-  <!-- Tab Capture -->
-  <rect x="50" y="345" width="220" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="160" y="365" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Tab Capture</text>
-  <text x="160" y="379" text-anchor="middle" fill="#8b8fa7" font-size="10">Screenshot | Visual State</text>
+  <rect x="50" y="358" width="220" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="160" y="379" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Tab Capture</text>
+  <text x="160" y="395" text-anchor="middle" fill="#8b8fa7" font-size="10">Screenshot | Visual state</text>
 
-  <!-- User -->
-  <rect x="85" y="410" width="150" height="35" rx="17" fill="url(#blue)"/>
-  <text x="160" y="432" text-anchor="middle" fill="white" font-size="11" font-weight="600">User (Voice / Text)</text>
+  <rect x="84" y="428" width="152" height="38" rx="19" fill="url(#blue)"/>
+  <text x="160" y="451" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600">User (Voice / Text)</text>
 
-  <!-- Confidence Ladder -->
-  <rect x="50" y="455" width="220" height="30" rx="6" fill="#232736" stroke="#4f8ff7" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="160" y="474" text-anchor="middle" fill="#4f8ff7" font-size="9">Tier 1 -> 2 -> 3 -> 4 Confidence Ladder</text>
+  <!-- Backend -->
+  <rect x="315" y="78" width="270" height="360" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
+  <text x="450" y="103" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Backend - Cloud Run</text>
 
-  <!-- Backend (Center) -->
-  <rect x="320" y="75" width="260" height="320" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="450" y="100" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Backend - Cloud Run</text>
+  <rect x="338" y="120" width="224" height="45" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="450" y="140" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">FastAPI + WebSocket</text>
+  <text x="450" y="155" text-anchor="middle" fill="#8b8fa7" font-size="10">Session transport</text>
 
-  <!-- FastAPI -->
-  <rect x="340" y="115" width="220" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="450" y="135" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">FastAPI + WebSocket</text>
-  <text x="450" y="149" text-anchor="middle" fill="#8b8fa7" font-size="10">Session Management</text>
+  <rect x="338" y="175" width="224" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="450" y="196" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Live Session Manager</text>
+  <text x="450" y="212" text-anchor="middle" fill="#8b8fa7" font-size="10">Gemini Live session | browser_task tool</text>
 
-  <!-- Planner -->
-  <rect x="340" y="170" width="105" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="392" y="190" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Planner</text>
-  <text x="392" y="204" text-anchor="middle" fill="#8b8fa7" font-size="9">Action routing</text>
+  <rect x="338" y="235" width="108" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="392" y="256" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Page Context</text>
+  <text x="392" y="272" text-anchor="middle" fill="#8b8fa7" font-size="9">Page map | screenshot</text>
 
-  <!-- Verifier -->
-  <rect x="455" y="170" width="105" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="507" y="190" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Verifier</text>
-  <text x="507" y="204" text-anchor="middle" fill="#8b8fa7" font-size="9">Post-action check</text>
+  <rect x="454" y="235" width="108" height="50" rx="8" fill="#232736" stroke="#2d3148" stroke-width="1"/>
+  <text x="508" y="256" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Action Bridge</text>
+  <text x="508" y="272" text-anchor="middle" fill="#8b8fa7" font-size="9">Content script tools</text>
 
-  <!-- Page Map -->
-  <rect x="455" y="225" width="105" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
-  <text x="507" y="245" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Page Map</text>
-  <text x="507" y="259" text-anchor="middle" fill="#8b8fa7" font-size="9">A11y tree builder</text>
+  <rect x="338" y="295" width="224" height="60" rx="8" fill="#232736" stroke="#4f8ff7" stroke-width="1.5"/>
+  <text x="450" y="319" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Browser Agent Loop</text>
+  <text x="450" y="336" text-anchor="middle" fill="#8b8fa7" font-size="10">DOM first | visual fallback | ask user</text>
 
-  <!-- Live Session -->
-  <rect x="340" y="280" width="220" height="45" rx="6" fill="#232736" stroke="#4f8ff7" stroke-width="1"/>
-  <text x="450" y="300" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Live Session Manager</text>
-  <text x="450" y="314" text-anchor="middle" fill="#8b8fa7" font-size="10">Gemini Live API Voice</text>
+  <rect x="338" y="367" width="224" height="45" rx="8" fill="#232736" stroke="#4ff78b" stroke-width="1.5" stroke-dasharray="5,4"/>
+  <text x="450" y="387" text-anchor="middle" fill="#4ff78b" font-size="10" font-weight="600">Observe -> Plan -> Act -> Verify</text>
+  <text x="450" y="402" text-anchor="middle" fill="#8b8fa7" font-size="9">Verified browser control loop</text>
 
-  <!-- Verification Loop Arrow -->
-  <rect x="340" y="340" width="220" height="45" rx="6" fill="#232736" stroke="#4ff78b" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="450" y="358" text-anchor="middle" fill="#4ff78b" font-size="10" font-weight="500">Observe -> Plan -> Act -> Verify</text>
-  <text x="450" y="372" text-anchor="middle" fill="#8b8fa7" font-size="9">Continuous verification loop</text>
+  <!-- Google Cloud -->
+  <rect x="610" y="78" width="260" height="415" rx="12" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
+  <text x="740" y="103" text-anchor="middle" fill="#34a853" font-size="13" font-weight="600">Google Cloud</text>
 
-  <!-- Google Cloud (Right) -->
-  <rect x="610" y="75" width="260" height="420" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="740" y="100" text-anchor="middle" fill="#34a853" font-size="13" font-weight="600">Google Cloud</text>
+  <rect x="630" y="120" width="220" height="55" rx="8" fill="#232736" stroke="#34a853" stroke-width="1.5"/>
+  <text x="740" y="143" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash Native Audio</text>
+  <text x="740" y="160" text-anchor="middle" fill="#8b8fa7" font-size="10">Live voice | tool calling</text>
 
-  <!-- Gemini Live -->
-  <rect x="630" y="115" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="740" y="137" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash Native Audio</text>
-  <text x="740" y="153" text-anchor="middle" fill="#8b8fa7" font-size="10">Live voice | Tool calling</text>
+  <rect x="630" y="190" width="220" height="55" rx="8" fill="#232736" stroke="#34a853" stroke-width="1.5"/>
+  <text x="740" y="213" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 3 Flash</text>
+  <text x="740" y="230" text-anchor="middle" fill="#8b8fa7" font-size="10">Unified browser-agent loop</text>
 
-  <!-- Gemini Flash -->
-  <rect x="630" y="180" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="740" y="202" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash</text>
-  <text x="740" y="218" text-anchor="middle" fill="#8b8fa7" font-size="10">Page understanding | Action planning</text>
+  <rect x="630" y="270" width="220" height="50" rx="8" fill="#232736" stroke="#34a853" stroke-width="1"/>
+  <text x="740" y="291" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Firestore + Cloud Logging</text>
+  <text x="740" y="307" text-anchor="middle" fill="#8b8fa7" font-size="9">Persistence (optional) | Observability (optional)</text>
 
-  <!-- Gemini Pro -->
-  <rect x="630" y="245" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="740" y="267" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Pro</text>
-  <text x="740" y="283" text-anchor="middle" fill="#8b8fa7" font-size="10">Hard-page recovery | A11y diagnosis</text>
+  <rect x="630" y="340" width="220" height="50" rx="8" fill="#232736" stroke="#34a853" stroke-width="1"/>
+  <text x="740" y="361" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Cloud Build + Artifact Registry</text>
+  <text x="740" y="377" text-anchor="middle" fill="#8b8fa7" font-size="9">Build pipeline | image publishing</text>
 
-  <!-- Firestore -->
-  <rect x="630" y="315" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="682" y="337" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Firestore</text>
-  <text x="682" y="351" text-anchor="middle" fill="#8b8fa7" font-size="9">Sessions | Prefs</text>
+  <rect x="630" y="410" width="220" height="48" rx="8" fill="url(#green)"/>
+  <text x="740" y="439" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="600">Cloud Run (Deployed)</text>
 
-  <!-- Cloud Logging -->
-  <rect x="745" y="315" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="797" y="337" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Cloud Logging</text>
-  <text x="797" y="351" text-anchor="middle" fill="#8b8fa7" font-size="9">Observability</text>
+  <!-- Connections -->
+  <line x1="290" y1="217" x2="315" y2="142" stroke="#4f8ff7" stroke-width="1.5" stroke-dasharray="6,3"/>
+  <text x="304" y="169" fill="#4f8ff7" font-size="8" transform="rotate(-70 304 169)">WebSocket</text>
 
-  <!-- Cloud Build -->
-  <rect x="630" y="380" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="682" y="402" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Cloud Build</text>
-  <text x="682" y="416" text-anchor="middle" fill="#8b8fa7" font-size="9">CI/CD</text>
-
-  <!-- Artifact Registry -->
-  <rect x="745" y="380" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
-  <text x="797" y="402" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Artifact Reg.</text>
-  <text x="797" y="416" text-anchor="middle" fill="#8b8fa7" font-size="9">Container images</text>
-
-  <!-- Cloud Run -->
-  <rect x="630" y="445" width="220" height="40" rx="6" fill="url(#green)"/>
-  <text x="740" y="470" text-anchor="middle" fill="white" font-size="11" font-weight="600">Cloud Run (Deployed)</text>
-
-  <!-- Connection arrows -->
-  <!-- Extension to Backend -->
-  <line x1="290" y1="215" x2="320" y2="137" stroke="#4f8ff7" stroke-width="1.5" stroke-dasharray="6,3"/>
-  <text x="305" y="165" fill="#4f8ff7" font-size="8" transform="rotate(-68 305 165)">WebSocket</text>
-
-  <!-- Backend to Gemini -->
-  <line x1="580" y1="142" x2="630" y2="142" stroke="#34a853" stroke-width="1.5"/>
-  <line x1="580" y1="207" x2="630" y2="207" stroke="#34a853" stroke-width="1.5"/>
-  <line x1="580" y1="272" x2="630" y2="272" stroke="#34a853" stroke-width="1.5"/>
-
-  <!-- Backend to Firestore/Logging -->
-  <line x1="580" y1="340" x2="630" y2="340" stroke="#34a853" stroke-width="1" stroke-dasharray="4,3"/>
+  <line x1="585" y1="200" x2="630" y2="147" stroke="#34a853" stroke-width="1.5"/>
+  <line x1="585" y1="325" x2="630" y2="217" stroke="#34a853" stroke-width="1.5"/>
+  <line x1="585" y1="389" x2="630" y2="295" stroke="#34a853" stroke-width="1" stroke-dasharray="4,3"/>
 </svg>
