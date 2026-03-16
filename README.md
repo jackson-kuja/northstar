@@ -185,6 +185,7 @@ wss://<your-cloud-run-service>/ws
 
 ## Challenge artifacts
 
+- Devpost submission copy: `DEVPOST_SUBMISSION.md`
 - Architecture diagram: `docs/architecture.png`
 - Demo script: `docs/demo-script.md`
 - Cloud deployment config: `infra/cloudbuild.yaml`
