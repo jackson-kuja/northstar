@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" font-family="Helvetica, Arial, sans-serif">
   <defs>
     <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
       <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.1"/>
@@ -21,34 +21,34 @@
   <rect width="900" height="520" rx="12" fill="#0f1117"/>
 
   <!-- Title -->
-  <text x="450" y="35" text-anchor="middle" fill="#e4e6ef" font-size="18" font-weight="700">Northstar — System Architecture</text>
+  <text x="450" y="35" text-anchor="middle" fill="#e4e6ef" font-size="18" font-weight="700">Northstar - System Architecture</text>
   <text x="450" y="52" text-anchor="middle" fill="#8b8fa7" font-size="11">Accessibility Autopilot for the Broken Web</text>
 
-  <!-- ═══ Chrome Extension (Left) ═══ -->
+  <!-- Chrome Extension (Left) -->
   <rect x="30" y="75" width="260" height="420" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
   <text x="160" y="100" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Chrome Extension (MV3)</text>
 
   <!-- Side Panel -->
   <rect x="50" y="115" width="220" height="60" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
   <text x="160" y="140" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Side Panel UI</text>
-  <text x="160" y="156" text-anchor="middle" fill="#8b8fa7" font-size="10">Voice I/O · Transcript · Status</text>
+  <text x="160" y="156" text-anchor="middle" fill="#8b8fa7" font-size="10">Voice I/O | Transcript | Status</text>
 
   <!-- Service Worker -->
   <rect x="50" y="185" width="220" height="60" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
   <text x="160" y="210" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Service Worker</text>
-  <text x="160" y="226" text-anchor="middle" fill="#8b8fa7" font-size="10">WebSocket · Message Router</text>
+  <text x="160" y="226" text-anchor="middle" fill="#8b8fa7" font-size="10">WebSocket | Message Router</text>
 
   <!-- Content Script -->
   <rect x="50" y="255" width="220" height="80" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
   <text x="160" y="278" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Content Script</text>
   <text x="160" y="294" text-anchor="middle" fill="#8b8fa7" font-size="10">Page Map Extraction</text>
-  <text x="160" y="308" text-anchor="middle" fill="#8b8fa7" font-size="10">Action Execution · Overlays</text>
+  <text x="160" y="308" text-anchor="middle" fill="#8b8fa7" font-size="10">Action Execution | Overlays</text>
   <text x="160" y="322" text-anchor="middle" fill="#8b8fa7" font-size="10">A11y Issue Detection</text>
 
   <!-- Tab Capture -->
   <rect x="50" y="345" width="220" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
   <text x="160" y="365" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Tab Capture</text>
-  <text x="160" y="379" text-anchor="middle" fill="#8b8fa7" font-size="10">Screenshot · Visual State</text>
+  <text x="160" y="379" text-anchor="middle" fill="#8b8fa7" font-size="10">Screenshot | Visual State</text>
 
   <!-- User -->
   <rect x="85" y="410" width="150" height="35" rx="17" fill="url(#blue)"/>
@@ -56,11 +56,11 @@
 
   <!-- Confidence Ladder -->
   <rect x="50" y="455" width="220" height="30" rx="6" fill="#232736" stroke="#4f8ff7" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="160" y="474" text-anchor="middle" fill="#4f8ff7" font-size="9">Tier 1→2→3→4 Confidence Ladder</text>
+  <text x="160" y="474" text-anchor="middle" fill="#4f8ff7" font-size="9">Tier 1 -> 2 -> 3 -> 4 Confidence Ladder</text>
 
-  <!-- ═══ Backend (Center) ═══ -->
+  <!-- Backend (Center) -->
   <rect x="320" y="75" width="260" height="320" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
-  <text x="450" y="100" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Backend — Cloud Run</text>
+  <text x="450" y="100" text-anchor="middle" fill="#4f8ff7" font-size="13" font-weight="600">Backend - Cloud Run</text>
 
   <!-- FastAPI -->
   <rect x="340" y="115" width="220" height="45" rx="6" fill="#232736" stroke="#2d3148" stroke-width="1"/>
@@ -89,32 +89,32 @@
 
   <!-- Verification Loop Arrow -->
   <rect x="340" y="340" width="220" height="45" rx="6" fill="#232736" stroke="#4ff78b" stroke-width="1" stroke-dasharray="4,3"/>
-  <text x="450" y="358" text-anchor="middle" fill="#4ff78b" font-size="10" font-weight="500">Observe → Plan → Act → Verify</text>
+  <text x="450" y="358" text-anchor="middle" fill="#4ff78b" font-size="10" font-weight="500">Observe -> Plan -> Act -> Verify</text>
   <text x="450" y="372" text-anchor="middle" fill="#8b8fa7" font-size="9">Continuous verification loop</text>
 
-  <!-- ═══ Google Cloud (Right) ═══ -->
+  <!-- Google Cloud (Right) -->
   <rect x="610" y="75" width="260" height="420" rx="10" fill="#1a1d27" stroke="#2d3148" stroke-width="1" filter="url(#shadow)"/>
   <text x="740" y="100" text-anchor="middle" fill="#34a853" font-size="13" font-weight="600">Google Cloud</text>
 
   <!-- Gemini Live -->
   <rect x="630" y="115" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
   <text x="740" y="137" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash Native Audio</text>
-  <text x="740" y="153" text-anchor="middle" fill="#8b8fa7" font-size="10">Live voice · Tool calling</text>
+  <text x="740" y="153" text-anchor="middle" fill="#8b8fa7" font-size="10">Live voice | Tool calling</text>
 
   <!-- Gemini Flash -->
   <rect x="630" y="180" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
   <text x="740" y="202" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Flash</text>
-  <text x="740" y="218" text-anchor="middle" fill="#8b8fa7" font-size="10">Page understanding · Action planning</text>
+  <text x="740" y="218" text-anchor="middle" fill="#8b8fa7" font-size="10">Page understanding | Action planning</text>
 
   <!-- Gemini Pro -->
   <rect x="630" y="245" width="220" height="55" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
   <text x="740" y="267" text-anchor="middle" fill="#e4e6ef" font-size="11" font-weight="600">Gemini 2.5 Pro</text>
-  <text x="740" y="283" text-anchor="middle" fill="#8b8fa7" font-size="10">Hard-page recovery · A11y diagnosis</text>
+  <text x="740" y="283" text-anchor="middle" fill="#8b8fa7" font-size="10">Hard-page recovery | A11y diagnosis</text>
 
   <!-- Firestore -->
   <rect x="630" y="315" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
   <text x="682" y="337" text-anchor="middle" fill="#e4e6ef" font-size="10" font-weight="600">Firestore</text>
-  <text x="682" y="351" text-anchor="middle" fill="#8b8fa7" font-size="9">Sessions · Prefs</text>
+  <text x="682" y="351" text-anchor="middle" fill="#8b8fa7" font-size="9">Sessions | Prefs</text>
 
   <!-- Cloud Logging -->
   <rect x="745" y="315" width="105" height="50" rx="6" fill="#232736" stroke="#34a853" stroke-width="1"/>
@@ -135,16 +135,16 @@
   <rect x="630" y="445" width="220" height="40" rx="6" fill="url(#green)"/>
   <text x="740" y="470" text-anchor="middle" fill="white" font-size="11" font-weight="600">Cloud Run (Deployed)</text>
 
-  <!-- ═══ Connection arrows ═══ -->
-  <!-- Extension → Backend -->
+  <!-- Connection arrows -->
+  <!-- Extension to Backend -->
   <line x1="290" y1="215" x2="320" y2="137" stroke="#4f8ff7" stroke-width="1.5" stroke-dasharray="6,3"/>
   <text x="305" y="165" fill="#4f8ff7" font-size="8" transform="rotate(-68 305 165)">WebSocket</text>
 
-  <!-- Backend → Gemini -->
+  <!-- Backend to Gemini -->
   <line x1="580" y1="142" x2="630" y2="142" stroke="#34a853" stroke-width="1.5"/>
   <line x1="580" y1="207" x2="630" y2="207" stroke="#34a853" stroke-width="1.5"/>
   <line x1="580" y1="272" x2="630" y2="272" stroke="#34a853" stroke-width="1.5"/>
 
-  <!-- Backend → Firestore/Logging -->
+  <!-- Backend to Firestore/Logging -->
   <line x1="580" y1="340" x2="630" y2="340" stroke="#34a853" stroke-width="1" stroke-dasharray="4,3"/>
 </svg>
