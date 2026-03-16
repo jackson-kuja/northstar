@@ -56,5 +56,6 @@ Next, I want to expand it to more real workflows and test it more deeply with as
 
 ## Project Media
 
+- Marketing gallery graphic: [docs/devpost-marketing.png](/Users/jacksonkuja/Northstar/docs/devpost-marketing.png)
 - Image gallery asset: [docs/architecture.png](/Users/jacksonkuja/Northstar/docs/architecture.png)
 - Video demo link: `TODO - add final public video URL before submitting`

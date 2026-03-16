@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200" font-family="'Avenir Next', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fbf8f1"/>
+      <stop offset="55%" stop-color="#f7f2e6"/>
+      <stop offset="100%" stop-color="#eef4ff"/>
+    </linearGradient>
+    <linearGradient id="blueWash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff5ff"/>
+      <stop offset="100%" stop-color="#d9e8ff"/>
+    </linearGradient>
+    <linearGradient id="mintWash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f1fbf4"/>
+      <stop offset="100%" stop-color="#daf2e2"/>
+    </linearGradient>
+    <linearGradient id="sunWash" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fff7df"/>
+      <stop offset="100%" stop-color="#f6ead0"/>
+    </linearGradient>
+    <linearGradient id="brandBlue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#6a9fff"/>
+      <stop offset="100%" stop-color="#477df1"/>
+    </linearGradient>
+    <linearGradient id="brandGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#39bc69"/>
+      <stop offset="100%" stop-color="#249e52"/>
+    </linearGradient>
+    <linearGradient id="panelGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f6f9ff"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="28" stdDeviation="30" flood-color="#4f6587" flood-opacity="0.12"/>
+    </filter>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#51627d" flood-opacity="0.11"/>
+    </filter>
+  </defs>
+
+  <rect width="1800" height="1200" fill="url(#bg)"/>
+  <circle cx="200" cy="190" r="250" fill="#e6efff"/>
+  <circle cx="1490" cy="188" r="240" fill="#ebf9ef"/>
+  <circle cx="1215" cy="1050" r="290" fill="#f5ead5"/>
+  <circle cx="445" cy="980" r="210" fill="#edf6ff"/>
+
+  <rect x="86" y="88" width="286" height="44" rx="22" fill="#ffffff" stroke="#cfe0fb" stroke-width="2"/>
+  <circle cx="116" cy="110" r="8" fill="#4d86f2"/>
+  <text x="138" y="117" fill="#46607f" font-size="19" font-weight="700" letter-spacing="1.1">VOICE-FIRST AI WEB NAVIGATOR</text>
+
+  <g transform="translate(92 164)">
+    <rect x="0" y="4" width="86" height="86" rx="28" fill="#142333"/>
+    <circle cx="43" cy="47" r="26" fill="#0f1d2b" stroke="#9ec6ff" stroke-width="4"/>
+    <circle cx="43" cy="47" r="13" fill="#f9fbff"/>
+    <circle cx="52" cy="38" r="4.5" fill="#9fc6ff"/>
+    <path d="M43 14 L52 38 L76 47 L52 56 L43 80 L34 56 L10 47 L34 38 Z" fill="none" stroke="#ffffff" stroke-width="4.5" stroke-linejoin="round"/>
+    <text x="112" y="43" fill="#172235" font-size="68" font-weight="700">Northstar</text>
+    <text x="114" y="81" fill="#5b6d88" font-size="25" font-weight="600">Accessibility autopilot for the broken web.</text>
+  </g>
+
+  <text x="92" y="360" fill="#1d2a3c" font-size="78" font-weight="700">
+    <tspan x="92" dy="0">Makes hard-to-use</tspan>
+    <tspan x="92" dy="84">websites usable.</tspan>
+  </text>
+
+  <text x="96" y="540" fill="#5a6b84" font-size="29" font-weight="500">
+    <tspan x="96" dy="0">Semantic page understanding first.</tspan>
+    <tspan x="96" dy="38">Visual fallback when markup breaks.</tspan>
+    <tspan x="96" dy="38">Verification after every action.</tspan>
+  </text>
+
+  <g transform="translate(96 650)">
+    <rect x="0" y="0" width="214" height="52" rx="26" fill="#e9f1ff" stroke="#c8dafd" stroke-width="2"/>
+    <text x="107" y="34" text-anchor="middle" fill="#3d6fda" font-size="25" font-weight="700">Voice + text</text>
+    <rect x="232" y="0" width="276" height="52" rx="26" fill="#eff9f2" stroke="#cdebd7" stroke-width="2"/>
+    <text x="370" y="34" text-anchor="middle" fill="#249753" font-size="25" font-weight="700">DOM first, vision fallback</text>
+    <rect x="530" y="0" width="230" height="52" rx="26" fill="#fff6e2" stroke="#eed9a9" stroke-width="2"/>
+    <text x="645" y="34" text-anchor="middle" fill="#9c6a12" font-size="25" font-weight="700">Action verification</text>
+  </g>
+
+  <g filter="url(#softShadow)">
+    <rect x="896" y="136" width="810" height="692" rx="38" fill="#ffffff" stroke="#d7e2f2" stroke-width="3"/>
+    <rect x="896" y="136" width="810" height="68" rx="38" fill="#f7fbff"/>
+    <circle cx="942" cy="170" r="10" fill="#ff8d7b"/>
+    <circle cx="974" cy="170" r="10" fill="#f4c95f"/>
+    <circle cx="1006" cy="170" r="10" fill="#47c870"/>
+    <rect x="1042" y="152" width="364" height="36" rx="18" fill="#edf3fb" stroke="#d7e2f4" stroke-width="2"/>
+    <text x="1224" y="176" text-anchor="middle" fill="#6f8098" font-size="18" font-weight="600">techmart.example / checkout flow</text>
+
+    <rect x="924" y="226" width="490" height="572" rx="30" fill="url(#sunWash)"/>
+    <text x="968" y="275" fill="#182539" font-size="30" font-weight="700">TechMart</text>
+    <text x="968" y="304" fill="#76849b" font-size="18">Broken demo site with unlabeled controls and custom widgets</text>
+
+    <rect x="968" y="334" width="164" height="82" rx="22" fill="#ffffff" stroke="#efc8c8" stroke-width="3"/>
+    <text x="992" y="366" fill="#9a4f55" font-size="18" font-weight="700">Price filter</text>
+    <rect x="992" y="378" width="112" height="18" rx="9" fill="#ffe6e6"/>
+    <text x="992" y="408" fill="#c26870" font-size="15">Missing label</text>
+
+    <rect x="1150" y="334" width="212" height="82" rx="22" fill="#ffffff" stroke="#dddbe7" stroke-width="2"/>
+    <text x="1174" y="366" fill="#475a78" font-size="18" font-weight="700">Sort</text>
+    <rect x="1174" y="378" width="152" height="18" rx="9" fill="#edf2fa"/>
+    <text x="1174" y="408" fill="#7b8aa1" font-size="15">Custom dropdown widget</text>
+
+    <rect x="968" y="452" width="180" height="232" rx="28" fill="#ffffff" stroke="#dfd8c8" stroke-width="2"/>
+    <rect x="988" y="472" width="140" height="88" rx="20" fill="#d7e7ff"/>
+    <text x="1058" y="594" text-anchor="middle" fill="#1d2a3c" font-size="21" font-weight="700">Bluetooth Speaker</text>
+    <text x="1058" y="626" text-anchor="middle" fill="#5f7090" font-size="17">$39.99</text>
+    <rect x="1002" y="646" width="112" height="32" rx="16" fill="#ecf8ef"/>
+    <text x="1058" y="668" text-anchor="middle" fill="#249753" font-size="16" font-weight="700">Top rated</text>
+
+    <rect x="1166" y="452" width="180" height="232" rx="28" fill="#ffffff" stroke="#dfd8c8" stroke-width="2"/>
+    <rect x="1186" y="472" width="140" height="88" rx="20" fill="#ffe9c4"/>
+    <text x="1256" y="594" text-anchor="middle" fill="#1d2a3c" font-size="21" font-weight="700">Noise Cancelling</text>
+    <text x="1256" y="626" text-anchor="middle" fill="#5f7090" font-size="17">$129.99</text>
+    <rect x="1202" y="646" width="108" height="32" rx="16" fill="#f3f5fb"/>
+    <text x="1256" y="668" text-anchor="middle" fill="#7d8ca4" font-size="16" font-weight="700">Excluded</text>
+
+    <rect x="968" y="714" width="378" height="52" rx="26" fill="#ffefe8" stroke="#f2cabf" stroke-width="2"/>
+    <text x="1157" y="747" text-anchor="middle" fill="#b05f4b" font-size="20" font-weight="700">Broken checkout flow: unlabeled cart and missing live region</text>
+
+    <rect x="1436" y="226" width="242" height="572" rx="30" fill="url(#blueWash)" stroke="#cfe0fb" stroke-width="2"/>
+    <rect x="1456" y="248" width="202" height="58" rx="22" fill="url(#brandBlue)"/>
+    <text x="1557" y="286" text-anchor="middle" fill="#ffffff" font-size="28" font-weight="700">Northstar</text>
+
+    <rect x="1458" y="336" width="182" height="64" rx="22" fill="#ffffff" stroke="#d7e3f7" stroke-width="2"/>
+    <text x="1482" y="364" fill="#6b7a92" font-size="15" font-weight="700">USER</text>
+    <text x="1482" y="390" fill="#213047" font-size="18">Show only items under $50</text>
+
+    <rect x="1458" y="422" width="184" height="128" rx="24" fill="#ffffff" stroke="#d7e3f7" stroke-width="2"/>
+    <text x="1482" y="450" fill="#4a77df" font-size="15" font-weight="700">NORTHSTAR</text>
+    <text x="1482" y="478" fill="#213047" font-size="18">
+      <tspan x="1482" dy="0">I found two unlabeled</tspan>
+      <tspan x="1482" dy="24">price inputs. Using the</tspan>
+      <tspan x="1482" dy="24">Max placeholder to</tspan>
+      <tspan x="1482" dy="24">pick the right one.</tspan>
+    </text>
+
+    <rect x="1458" y="572" width="184" height="66" rx="22" fill="#eef9f2" stroke="#cdebd7" stroke-width="2"/>
+    <text x="1482" y="601" fill="#249753" font-size="15" font-weight="700">VERIFIED</text>
+    <text x="1482" y="626" fill="#1b5230" font-size="18">Filter applied. Results updated.</text>
+
+    <rect x="1458" y="660" width="184" height="92" rx="22" fill="#fff8e7" stroke="#eed9a9" stroke-width="2"/>
+    <text x="1482" y="689" fill="#a06c10" font-size="15" font-weight="700">BARRIER FOUND</text>
+    <text x="1482" y="716" fill="#49310a" font-size="18">
+      <tspan x="1482" dy="0">No accessible label on</tspan>
+      <tspan x="1482" dy="24">the price filter inputs.</tspan>
+    </text>
+  </g>
+
+  <g transform="translate(92 890)">
+    <rect x="0" y="0" width="496" height="220" rx="34" fill="#ffffff" stroke="#d6e3f6" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="496" height="18" rx="34" fill="url(#brandBlue)"/>
+    <text x="34" y="74" fill="#17304f" font-size="34" font-weight="700">Voice-first navigation</text>
+    <text x="34" y="116" fill="#60728e" font-size="22">
+      <tspan x="34" dy="0">Persistent Chrome side panel that supports</tspan>
+      <tspan x="34" dy="30">live voice interaction and typed commands.</tspan>
+    </text>
+  </g>
+
+  <g transform="translate(652 890)">
+    <rect x="0" y="0" width="496" height="220" rx="34" fill="#ffffff" stroke="#d9e9dd" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="496" height="18" rx="34" fill="url(#brandGreen)"/>
+    <text x="34" y="74" fill="#17304f" font-size="34" font-weight="700">Works when markup breaks</text>
+    <text x="34" y="116" fill="#60728e" font-size="22">
+      <tspan x="34" dy="0">Semantic controls first, screenshot-guided</tspan>
+      <tspan x="34" dy="30">fallback when the page structure lies.</tspan>
+    </text>
+  </g>
+
+  <g transform="translate(1212 890)">
+    <rect x="0" y="0" width="496" height="220" rx="34" fill="#ffffff" stroke="#eadab5" stroke-width="2" filter="url(#cardShadow)"/>
+    <rect x="0" y="0" width="496" height="18" rx="34" fill="#e5b94e"/>
+    <text x="34" y="74" fill="#17304f" font-size="34" font-weight="700">Explains the barriers</text>
+    <text x="34" y="116" fill="#60728e" font-size="22">
+      <tspan x="34" dy="0">Northstar surfaces why the flow is difficult</tspan>
+      <tspan x="34" dy="30">instead of hiding the accessibility problem.</tspan>
+    </text>
+  </g>
+</svg>
