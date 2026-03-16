@@ -39,7 +39,7 @@
   <circle cx="1230" cy="1030" r="290" fill="#eff5fd"/>
   <circle cx="420" cy="1020" r="210" fill="#eef5ff"/>
 
-  <rect x="92" y="88" width="370" height="46" rx="23" fill="#ffffff" stroke="#d4e1f7" stroke-width="2"/>
+  <rect x="92" y="88" width="432" height="46" rx="23" fill="#ffffff" stroke="#d4e1f7" stroke-width="2"/>
   <circle cx="122" cy="111" r="8" fill="#4d83ef"/>
   <text x="144" y="118" fill="#49627f" font-size="20" font-weight="700" letter-spacing="1">GEMINI LIVE CONTROLLED BROWSING</text>
 
@@ -117,8 +117,8 @@
     </text>
 
     <text x="1484" y="478" fill="#4a77df" font-size="16" font-weight="700">NORTHSTAR</text>
-    <rect x="1480" y="490" width="174" height="130" rx="22" fill="#ffffff" stroke="#d7e3f7" stroke-width="2"/>
-    <text x="1500" y="526" fill="#213047" font-size="20">
+    <rect x="1476" y="490" width="182" height="130" rx="22" fill="#ffffff" stroke="#d7e3f7" stroke-width="2"/>
+    <text x="1496" y="526" fill="#213047" font-size="18.5">
       <tspan x="1500" dy="0">Using Gemini Live</tspan>
       <tspan x="1500" dy="24">to control the page</tspan>
       <tspan x="1500" dy="24">and verify the</tspan>
