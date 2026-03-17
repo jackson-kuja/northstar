@@ -797,26 +797,10 @@ class BrowserAgent:
         response: dict[str, Any],
         screenshot: dict[str, Any] | None = None,
     ) -> types.Part:
-        response_parts: list[types.FunctionResponsePart] = []
-        screenshot_data = (screenshot or {}).get("data")
-        if screenshot_data:
-            try:
-                response_parts.append(
-                    types.FunctionResponsePart(
-                        inline_data=types.FunctionResponseBlob(
-                            mime_type=(screenshot or {}).get("mimeType", "image/png"),
-                            data=base64.b64decode(screenshot_data),
-                        )
-                    )
-                )
-            except Exception:
-                logger.warning("Failed to attach screenshot to tool response.")
-
         return types.Part(
             function_response=types.FunctionResponse(
                 name=name,
                 response=response,
-                parts=response_parts or None,
             )
         )
 

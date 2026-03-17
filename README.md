@@ -165,6 +165,8 @@ Expected result: a JSON response with `"status": "ok"`.
 
 The repository includes a Cloud Build pipeline at `infra/cloudbuild.yaml` that builds the backend image, pushes it to Artifact Registry, and deploys it to Cloud Run.
 
+Google Cloud service integration is implemented in `backend/app/main.py`, including Firestore-backed session storage and Cloud Logging when configured.
+
 Example deployment command:
 
 ```bash
@@ -187,8 +189,8 @@ wss://<your-cloud-run-service>/ws
 
 - Devpost submission copy: `DEVPOST_SUBMISSION.md`
 - Marketing gallery graphic: `docs/devpost-marketing.png`
-- Architecture diagram: `docs/architecture.png`
-- Demo script: `docs/demo-script.md`
+- Architecture diagram for Devpost image gallery or file upload: `docs/architecture.png`
+- Google Cloud services usage example: `backend/app/main.py`
 - Cloud deployment config: `infra/cloudbuild.yaml`
 
 ## License
