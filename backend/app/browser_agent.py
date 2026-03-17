@@ -1,4 +1,4 @@
-"""Unified Gemini 3 Flash browser agent with DOM tools and Computer Use fallback."""
+"""Unified browser agent with DOM tools and optional Computer Use fallback."""
 
 from __future__ import annotations
 
@@ -17,9 +17,10 @@ from app.page_map import build_page_map_prompt, extract_actionable_targets
 
 logger = logging.getLogger("northstar.browser")
 
-BROWSER_AGENT_MODEL = os.getenv("BROWSER_AGENT_MODEL", "gemini-3-flash-preview")
+BROWSER_AGENT_MODEL = os.getenv("BROWSER_AGENT_MODEL", "gemini-2.5-flash")
 ORCHESTRATOR_MODEL = BROWSER_AGENT_MODEL
 COMPUTER_USE_MODEL = BROWSER_AGENT_MODEL
+_COMPUTER_USE_OVERRIDE = os.getenv("BROWSER_AGENT_ENABLE_COMPUTER_USE", "auto").strip().lower()
 MAX_ORCHESTRATOR_STEPS = int(os.getenv("BROWSER_ORCHESTRATOR_MAX_STEPS", "20"))
 ORCHESTRATOR_RESPONSE_TIMEOUT_SECONDS = float(
     os.getenv("BROWSER_ORCHESTRATOR_TIMEOUT_SECONDS", "45")
@@ -35,9 +36,14 @@ BLOCKER_MARKERS = (
     "can't",
     "unable",
     "not able",
-    "failed",
-    "issue",
-    "problem",
+    "failed to",
+    "there was an issue",
+    "there is an issue",
+    "ran into an issue",
+    "there was a problem",
+    "there is a problem",
+    "ran into a problem",
+    "blocked",
     "not complete",
     "not completed",
 )
@@ -719,14 +725,24 @@ class BrowserAgent:
                 response_task.cancel()
 
     async def _generate_agent_response(self, *, contents: list[types.Content]):
+        tools = list(BROWSER_AGENT_TOOL_DECLARATIONS)
+        system_instruction = BROWSER_AGENT_SYSTEM_INSTRUCTION
+        if _computer_use_enabled_for_model(BROWSER_AGENT_MODEL):
+            tools.append(COMPUTER_USE_TOOL)
+        else:
+            system_instruction = (
+                f"{BROWSER_AGENT_SYSTEM_INSTRUCTION}\n"
+                "- Computer Use is unavailable in this runtime. Stay within the direct DOM tools only.\n"
+            )
+
         return await asyncio.to_thread(
             self.client.models.generate_content,
             model=BROWSER_AGENT_MODEL,
             contents=contents,
             config=types.GenerateContentConfig(
                 temperature=0.0,
-                system_instruction=BROWSER_AGENT_SYSTEM_INSTRUCTION,
-                tools=[*BROWSER_AGENT_TOOL_DECLARATIONS, COMPUTER_USE_TOOL],
+                system_instruction=system_instruction,
+                tools=tools,
                 automatic_function_calling=types.AutomaticFunctionCallingConfig(
                     disable=True
                 ),
@@ -1236,7 +1252,35 @@ def _looks_like_blocker_summary(text: str) -> bool:
     lowered = (text or "").strip().lower()
     if not lowered:
         return False
-    return any(marker in lowered for marker in BLOCKER_MARKERS)
+    if any(lowered.startswith(marker) for marker in BLOCKER_MARKERS):
+        return True
+
+    return any(
+        phrase in lowered
+        for phrase in (
+            "failed to ",
+            "unable to ",
+            "could not ",
+            "couldn't ",
+            "cannot ",
+            "can't ",
+            "not able to ",
+            "blocked from ",
+        )
+    )
+
+
+def _computer_use_enabled_for_model(model_name: str) -> bool:
+    if _COMPUTER_USE_OVERRIDE in {"1", "true", "yes", "on"}:
+        return True
+    if _COMPUTER_USE_OVERRIDE in {"0", "false", "no", "off"}:
+        return False
+
+    normalized_model_name = str(model_name or "").strip().lower()
+    return (
+        "computer-use" in normalized_model_name
+        or normalized_model_name == "gemini-3-flash-preview"
+    )
 
 
 def _is_read_only_goal(goal: str) -> bool:

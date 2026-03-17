@@ -5,7 +5,11 @@ from types import SimpleNamespace
 
 from google.genai import errors as genai_errors
 
-from app.browser_agent import BrowserAgent, ORCHESTRATOR_MODEL
+from app.browser_agent import (
+    BrowserAgent,
+    ORCHESTRATOR_MODEL,
+    _computer_use_enabled_for_model,
+)
 
 
 def make_responses(
@@ -29,6 +33,23 @@ def make_function_response(name: str, args: dict):
                         SimpleNamespace(
                             text=None,
                             function_call=SimpleNamespace(name=name, args=args),
+                        )
+                    ]
+                )
+            )
+        ]
+    )
+
+
+def make_text_response(text: str):
+    return SimpleNamespace(
+        candidates=[
+            SimpleNamespace(
+                content=SimpleNamespace(
+                    parts=[
+                        SimpleNamespace(
+                            text=text,
+                            function_call=None,
                         )
                     ]
                 )
@@ -280,6 +301,28 @@ def test_browser_agent_returns_retry_when_page_context_is_missing():
     assert result["retry_goal"] == "describe this page"
 
 
+def test_browser_agent_treats_descriptive_text_with_issues_as_completed():
+    client = FakeClient(
+        {
+            ORCHESTRATOR_MODEL: [
+                make_text_response(
+                    "This page has several accessibility issues, including missing labels."
+                )
+            ]
+        }
+    )
+    agent = BrowserAgent(client)
+
+    async def execute_action(action):
+        raise AssertionError("No browser action should execute for a descriptive summary")
+
+    result = asyncio.run(agent.run_task("describe this page", make_session(), execute_action))
+
+    assert result["success"] is True
+    assert result["status"] == "completed"
+    assert "accessibility issues" in result["summary"]
+
+
 def test_browser_agent_blocks_purchase_actions_for_read_only_goals():
     client = FakeClient(
         make_responses(
@@ -481,3 +524,9 @@ def test_browser_agent_returns_friendly_message_for_free_tier_quota():
     assert result["mode"] == "orchestrator"
     assert "daily free-tier Gemini limit" in result["summary"]
     assert "midnight Pacific" in result["summary"]
+
+
+def test_computer_use_auto_mode_only_enables_supported_models():
+    assert _computer_use_enabled_for_model("gemini-2.5-flash") is False
+    assert _computer_use_enabled_for_model("gemini-3-flash-preview") is True
+    assert _computer_use_enabled_for_model("gemini-2.5-computer-use-preview-10-2025") is True

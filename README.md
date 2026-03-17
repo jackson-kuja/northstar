@@ -2,7 +2,7 @@
 
 Accessibility autopilot for the broken web.
 
-Northstar is a Chrome extension plus a FastAPI backend that helps blind and low-vision users operate inaccessible websites in real time. It uses semantic page understanding first, multimodal visual grounding when markup breaks down, and verification after every action so it can move through hostile UI more safely than blind browser automation.
+Northstar is a Chrome extension plus a FastAPI backend that helps blind and low-vision users operate inaccessible websites in real time. It uses semantic page understanding first, optional preview visual grounding when markup breaks down, and verification after every action so it can move through hostile UI more safely than blind browser automation.
 
 Built for the Gemini Live Agent Challenge.
 
@@ -12,7 +12,7 @@ Built for the Gemini Live Agent Challenge.
 
 - Describes the current page and calls out accessibility barriers
 - Executes voice-first browser tasks from a persistent Chrome side panel
-- Uses semantic controls first, then screenshot-guided fallback when the DOM is insufficient
+- Uses semantic controls first, with optional preview screenshot-guided fallback when the DOM is insufficient
 - Verifies whether an action actually changed the page in the expected way
 - Explains why a flow is difficult for screen reader and keyboard users
 
@@ -21,7 +21,7 @@ Built for the Gemini Live Agent Challenge.
 1. The Chrome extension collects page state, user commands, and screenshots from the active tab.
 2. The backend orchestrates live conversation, planning, browser actions, and verification over WebSockets.
 3. Gemini Live handles the real-time interaction loop.
-4. Gemini multimodal reasoning is used when accessibility metadata and page structure are not enough.
+4. Gemini multimodal reasoning can be enabled for visual fallback when accessibility metadata and page structure are not enough.
 5. Session state can persist to Firestore when configured, or fall back to in-memory/local recording during local development.
 
 ## Repository layout
@@ -29,7 +29,7 @@ Built for the Gemini Live Agent Challenge.
 ```text
 backend/       FastAPI WebSocket backend, planning, verification, session logic
 demo-site/     Intentionally broken demo site used in the live walkthrough
-docs/          Architecture diagram and demo script
+docs/          Architecture and marketing assets
 extension/     Chrome extension, side panel, service worker, content script
 infra/         Cloud Build configuration for container build + Cloud Run deploy
 ```
@@ -66,6 +66,9 @@ Notes:
 
 - `GEMINI_API_KEY` is required.
 - `GCP_PROJECT` is optional for local use. If Firestore or Cloud Logging are unavailable, the backend falls back gracefully for local development.
+- `BROWSER_AGENT_MODEL` defaults to `gemini-2.5-flash` for a more reproducible local setup.
+- `BROWSER_AGENT_ENABLE_COMPUTER_USE` defaults to automatic detection. Leave it unset for the stable local path.
+- If you explicitly want preview visual fallback, set `BROWSER_AGENT_MODEL=gemini-3-flash-preview` and `BROWSER_AGENT_ENABLE_COMPUTER_USE=1`. During local verification on March 16, 2026, that preview path was rate-limited on the second browser task.
 
 Run the backend:
 
@@ -115,7 +118,7 @@ ws://localhost:8080/ws
 
 ## Reproducible Testing
 
-Judges can verify Northstar in two ways: a fast automated backend test pass and a short end-to-end browser demo.
+Judges can verify Northstar with a fast backend test pass and a typed extension smoke check. The original multi-step demo flow is still available, but it depends on preview Computer Use quota and was not reproducible back-to-back on the verified local setup.
 
 ### 1. Automated backend tests
 
@@ -127,31 +130,47 @@ source .venv/bin/activate
 pytest tests -q
 ```
 
-Expected result: all backend tests pass. At submission time this returned `37 passed`.
+Expected result: all backend tests pass. The current repository returns `39 passed`.
 
-### 2. End-to-end local smoke test
+### 2. Verified local typed smoke test
 
 With the backend running on `http://localhost:8080`, the demo site running on `http://localhost:8765`, and the extension loaded:
 
 1. Open `http://localhost:8765`.
 2. Open the Northstar side panel from the Chrome toolbar.
-3. If microphone permission is inconvenient in the judge environment, use the keyboard toggle and type the same commands instead of speaking them.
-4. Run these commands in order:
+3. If microphone permission is inconvenient in the judge environment, use the keyboard toggle and type the command instead of speaking it.
+4. Run:
 
 - `Describe this page`
+
+Expected results:
+
+- Northstar connects to the local backend and returns a page summary for the demo store.
+- On the current demo page, the summary should mention the featured products UI and the top result `Beacon Bluetooth Speaker`.
+- The page itself remains unchanged because this is a read-only check; the visible summary line on the site stays `8 products under $500. Top result: Beacon Bluetooth Speaker at $39.99.`
+
+### 3. Optional preview Computer Use demo
+
+If you want to exercise the full browser-action flow, start the backend with preview Computer Use enabled:
+
+```bash
+cd backend
+source .venv/bin/activate
+BROWSER_AGENT_MODEL=gemini-3-flash-preview BROWSER_AGENT_ENABLE_COMPUTER_USE=1 uvicorn app.main:app --host 0.0.0.0 --port 8080
+```
+
+Then try these commands:
+
 - `Filter to show only items under 50 dollars and sort by rating`
 - `Add the top-rated item to cart`
 - `Go to checkout`
 - `Why was that hard for a screen reader?`
 
-Expected results:
+Important note:
 
-- Northstar describes the TechMart demo page and calls out the main accessibility barriers, including the missing language attribute, missing main landmark, unlabeled controls, and non-semantic interactive elements.
-- Northstar applies the budget filter and sort change on the broken UI and the results summary updates to show `4 products under $50` with `Beacon Bluetooth Speaker` as the top result.
-- Northstar adds the top-rated item to the cart and opens checkout.
-- Northstar explains why the flow is difficult on this page and surfaces the barriers it found.
+- During local verification on March 16, 2026, the preview model completed the first browser task and then returned `Northstar hit a Gemini rate limit for gemini-3-flash-preview.` on the next action. Treat the full multi-step flow as quota-dependent unless you know your Gemini project has enough preview capacity.
 
-### 3. Basic backend health check
+### 4. Basic backend health check
 
 If you only want to verify that the backend is up before running the full demo:
 
